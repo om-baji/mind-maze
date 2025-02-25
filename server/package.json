@@ -1,0 +1,20 @@
+{
+  "name": "server",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy --minify"
+  },
+  "dependencies": {
+    "@clerk/clerk-sdk-node": "^5.1.6",
+    "@google/generative-ai": "^0.22.0",
+    "@prisma/client": "6.4.1",
+    "@prisma/extension-accelerate": "^1.2.2",
+    "hono": "^4.7.2",
+    "svix": "^1.60.0"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20250214.0",
+    "prisma": "6.4.1",
+    "wrangler": "^3.109.2"
+  }
+}
