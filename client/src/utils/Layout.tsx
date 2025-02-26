@@ -8,7 +8,7 @@ export function Layout({ children }: {
     return <>
         <ClerkProvider publishableKey={PUBLISHABLE_KEY}>
             <Toaster />
-            {children}
+                {children}
         </ClerkProvider>
     </>
 }
