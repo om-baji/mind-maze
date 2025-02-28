@@ -1,10 +1,10 @@
-import { LoginForm } from '@/components/login-form'
+import { SignupForm } from '@/components/signup-form'
 import { useAuthCtx } from '@/context/AuthContext'
-import { useNavigate } from 'react-router-dom'
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 
-const Auth : React.FC = () => {
+const AuthSignup : React.FC = () => {
 
   const isSignedIn = useAuthCtx()
   const navigate = useNavigate();
@@ -16,9 +16,9 @@ const Auth : React.FC = () => {
 
   return (
     <div className='flex justify-center items-center h-screen'>
-      <LoginForm />
+      <SignupForm />
     </div>
   )
 }
 
-export default Auth
+export default AuthSignup

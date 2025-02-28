@@ -16,7 +16,7 @@ const App: React.FC = () => {
           </p>
           <div className="flex gap-4">
             <Button 
-              onClick={() => window.location.href = '/sign-in'}
+              onClick={() => window.location.href = '/login'}
               className="group"
             >
               Get Started

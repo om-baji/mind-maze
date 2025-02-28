@@ -1,4 +1,4 @@
-import { ChevronUp, LayoutDashboardIcon, NotebookIcon, PencilIcon, User2 } from "lucide-react"
+import { ChevronDown, LayoutDashboardIcon, NotebookIcon, PencilIcon, User2 } from "lucide-react"
 import {
     Sidebar,
     SidebarContent,
@@ -9,6 +9,7 @@ import {
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
+    SidebarTrigger,
 } from "@/components/ui/sidebar"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { useAuth, useUser } from "@clerk/clerk-react"
@@ -34,27 +35,30 @@ const items = [
 
 export function AppSidebar() {
     const { signOut } = useAuth()
-    const { user,isLoaded } = useUser()
+    const { user, isLoaded } = useUser()
 
     const onSignOut = async () => {
         try {
-            await signOut({ redirectUrl: "/sign-in" })
+            await signOut({ redirectUrl: "/login" })
         } catch (error) {
-            toast("Sign out failed!")
+            toast.error("Sign out failed!", { description: error instanceof Error ? error.message : "Something went wrong!" })
         }
     }
     return (
-        <Sidebar>
+        <Sidebar className="h-full bg-white">
             <SidebarContent>
                 <SidebarGroup>
-                    <SidebarGroupLabel className="text-sm">Notes Native</SidebarGroupLabel>
-                    <SidebarGroupContent>
+                    <SidebarGroupLabel className="p-4 text-lg font-medium border-b">
+                        Mind Maze
+                        <SidebarTrigger />
+                    </SidebarGroupLabel>
+                    <SidebarGroupContent className="py-2">
                         <SidebarMenu>
                             {items.map((item) => (
-                                <SidebarMenuItem key={item.title} className="mt-3">
-                                    <SidebarMenuButton asChild>
-                                        <a href={item.url}>
-                                            <item.icon />
+                                <SidebarMenuItem key={item.title}>
+                                    <SidebarMenuButton asChild className="px-4 py-3 hover:bg-gray-100">
+                                        <a href={item.url} className="flex items-center">
+                                            <item.icon className="h-5 w-5 mr-3 text-gray-500" />
                                             <span>{item.title}</span>
                                         </a>
                                     </SidebarMenuButton>
@@ -64,14 +68,19 @@ export function AppSidebar() {
                     </SidebarGroupContent>
                 </SidebarGroup>
             </SidebarContent>
-            <SidebarFooter>
+            <SidebarFooter className="mt-auto border-t">
                 <SidebarMenu>
                     <SidebarMenuItem>
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                                <SidebarMenuButton className="p-6">
-                                    <User2 /> {isLoaded ? user?.emailAddresses[0].emailAddress : "Loading..."}
-                                    <ChevronUp className="ml-auto" />
+                                <SidebarMenuButton className="w-full px-4 py-3 hover:bg-gray-100">
+                                    <div className="flex items-center w-full">
+                                        <User2 className="h-5 w-5 mr-3 text-gray-500" />
+                                        <span className="text-sm">
+                                            {isLoaded ? user?.emailAddresses[0].emailAddress : "Loading..."}
+                                        </span>
+                                        <ChevronDown className="ml-auto h-4 w-4 text-gray-500" />
+                                    </div>
                                 </SidebarMenuButton>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent
