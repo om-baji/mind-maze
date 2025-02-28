@@ -1,70 +1,62 @@
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { cn } from "@/lib/utils";
-import { useSession, useSignIn } from "@clerk/clerk-react";
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { toast } from "sonner";
+import { useSignIn, useSignUp } from '@clerk/clerk-react';
+import { Label } from '@radix-ui/react-label';
+import React, { useState } from 'react';
+import { Alert, AlertDescription } from './ui/alert';
+import { Button } from './ui/button';
+import { Input } from './ui/input';
 
-export function LoginForm({ className, ...props }: React.ComponentProps<"div">) {
-  const { isLoaded, setActive, signIn } = useSignIn();
-  const [email, setEmail] = useState("");
-  const [isPending, setPending] = useState(false);
-  const [error, setError] = useState("");
-  const navigate = useNavigate();
-  const { session } = useSession();
+type formType = "login" | "signup";
+console.log("FormAuth component is mounting!");
 
-  console.log(signIn)
+const FormAuth : React.FC = () => {
+    
+    const [email,setEmail] = useState("");
+    const [code,setCode] = useState("");
+    const [error,setError] = useState("");
+    const [type,setType] = useState<formType | null>(null);
+    const [pending,setPending] = useState(false)
+    const {isLoaded : loadingLogin,setActive : setActiveLogin, signIn } = useSignIn();
+    const {isLoaded : loadingRegister,setActive : setActiveRegister, signUp} = useSignUp()
 
-  useEffect(() => {
-    if (session) {
-      navigate("/home");
-      toast("Already logged in");
+    console.log({ signIn, signUp, loadingLogin, loadingRegister });
+
+
+    if(!loadingLogin || !loadingRegister) {
+        console.log("control react")
+        return <div className='flex justify-center items-center h-screen'>
+            Loading...
+        </div>
     }
-  }, [session]);
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!isLoaded) return;
-    try {
-      setPending(true);
-      const response = await signIn.create({ identifier: email });
+    const handleAuth = async (e : React.FormEvent) => {
+        e.preventDefault()
+        setPending(true);
+        try {
+            
+            // const repsonse = await signIn.create({
+            //     identifier : email,
+            //     strategy : "email_code",
+            // })
 
-      if (response.status !== "complete") {
-        setError("Something went wrong");
-        return;
-      }
+            // console.log(repsonse)
+        
 
-      if (response.status === "complete") {
-        await setActive({ session: response.createdSessionId });
-        console.log("Login success");
-        navigate("/home");
-      }
-    } catch (error) {
-      if (error instanceof Error) {
-        console.log(JSON.stringify(error));
-        setError(error.message);
-      }
-      setError(error as string);
-      console.log("Unknown error occurred", error);
-    } finally {
-      setPending(false);
+        } catch (error) {
+            setError(error instanceof Error ? error.message : String(error))
+        }
     }
-  };
 
-  const handleOauth = async () => {
-    if (!isLoaded) return;
-    await signIn.authenticateWithRedirect({
-      strategy: "oauth_google",
-      redirectUrl: window.location.origin,
-      redirectUrlComplete: `${window.location.origin}/home`,
-    });
-  };
+    const handleOauth = async () => {
+        if (!loadingLogin || !loadingRegister) return;
+        await signIn.authenticateWithRedirect({
+          strategy: "oauth_google",
+          redirectUrl: window.location.origin,
+          redirectUrlComplete: `${window.location.origin}/home`,
+        });
+      };
 
   return (
-    <div className={cn("flex justify-center items-center py-8", className)} {...props}>
+    <div className="flex justify-center items-center py-8" >
       <div className="flex w-full max-w-4xl shadow-lg rounded-xl overflow-hidden bg-white dark:bg-zinc-800">
         <div className="w-full max-w-md p-10">
           <div className="grid gap-6">
@@ -75,13 +67,13 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
                 <AlertDescription className="text-red-600 dark:text-red-400">{error}</AlertDescription>
               </Alert>
             )}
-            <form className="grid gap-4" onSubmit={handleLogin}>
+            <form className="grid gap-4" onSubmit={handleAuth}>
               <div>
                 <Label htmlFor="email" className="text-neutral-700 dark:text-neutral-300">Email</Label>
                 <Input id="email" type="email" placeholder="m@example.com" onChange={(e) => setEmail(e.target.value)} required className="dark:bg-zinc-700 dark:text-white"/>
               </div>
-              <Button disabled={isPending} type="submit" className="w-full">
-                {isPending ? "Loading..." : "Login"}
+              <Button disabled={pending} type="submit" className="w-full">
+                {pending ? "Loading..." : "Login"}
               </Button>
             </form>
             <div className="relative text-center text-sm text-neutral-600 dark:text-neutral-300">
@@ -124,5 +116,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
         </div>
       </div>
     </div>
-  );
+  )
 }
+
+export default FormAuth

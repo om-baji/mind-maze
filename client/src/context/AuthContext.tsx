@@ -13,7 +13,7 @@ export function AuthProvider({ children }: {
 
     useEffect(() => {
         if (isLoaded) {
-            setAuth(!!isSignedIn);
+            setAuth(isSignedIn);
         }
     }, [isLoaded, isSignedIn, setAuth]);
 

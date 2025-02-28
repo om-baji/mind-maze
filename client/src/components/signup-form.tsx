@@ -25,11 +25,11 @@ export function SignupForm({
   const { session } = useSession()
 
   useEffect(() => {
-    if(session) {
+    if (session) {
       navigate("/home")
       toast("Already logged in")
     }
-  },[session])
+  }, [session])
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,21 +43,21 @@ export function SignupForm({
       })
 
       setPending(true)
-    } catch (error: any) {
-      if (error instanceof Error) {
-        console.log(JSON.stringify(error))
-        setError(error.message)
-      }
-      setError(error as string)
+
+    } catch (error) {
+      setError(error instanceof Error ? error.message : String(error))
       console.log("Unknown error occurred", error)
     }
   }
 
   const handleVerify = async () => {
+
     try {
       const response = await signUp?.attemptEmailAddressVerification({
         "code": code
       })
+
+      console.log(response)
 
       if (response?.status !== "complete") {
         throw new Error("Something went wrong!")
@@ -98,11 +98,11 @@ export function SignupForm({
               <div className="flex flex-col items-center text-center">
                 <h1 className="text-2xl font-bold">Welcome back</h1>
                 <p className="text-balance text-muted-foreground">
-                  Login to your Notes Native account
+                  Login to your Mind Maze account
                 </p>
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="name">Name</Label>
+                <Label htmlFor="name">username</Label>
                 <Input
                   id="name"
                   type="text"
@@ -126,6 +126,7 @@ export function SignupForm({
                 type="submit" className="w-full">
                 {isPending ? "Loading..." : "Sign up"}
               </Button>
+
               {error && (<Alert>
                 <AlertDescription>
                   {error}
@@ -148,7 +149,7 @@ export function SignupForm({
                       fill="currentColor"
                     />
                   </svg>
-                  <span className="sr-only">Login with Google</span>
+                  Login with Google
                 </Button>
 
               </div>
@@ -158,8 +159,11 @@ export function SignupForm({
                   Login
                 </a>
               </div>
+              <div className="mt-6 text-center text-xs text-neutral-600 dark:text-neutral-300">
+                By clicking continue, you agree to our <a href="#" className="underline">Terms of Service</a> and <a href="#" className="underline">Privacy Policy</a>.
+              </div>
             </div>
-          </form> ) : (
+          </form>) : (
             <form className="p-6 md:p-8" onSubmit={handleSignUp}>
               <div className="flex flex-col gap-6">
                 <div className="flex flex-col items-center text-center">
@@ -175,16 +179,17 @@ export function SignupForm({
                     id="code"
                     type="text"
                     placeholder="238XXX"
+                    value={code}
                     onChange={e => setCode(e.target.value)}
                     required
                   />
                 </div>
 
                 <Button
-                  disabled={isPending}
+                  disabled={!isPending}
                   onClick={handleVerify}
                   type="submit" className="w-full">
-                  {isPending ? "Loading..." : "Verify Code"}
+                  {!isPending ? "Loading..." : "Verify Code"}
                 </Button>
 
                 {error && (<Alert>
@@ -209,7 +214,7 @@ export function SignupForm({
                         fill="currentColor"
                       />
                     </svg>
-                    <span className="sr-only">Login with Google</span>
+                    Login with Google
                   </Button>
 
                 </div>
@@ -219,26 +224,29 @@ export function SignupForm({
                     Login
                   </a>
                 </div>
+                <div className="mt-6 text-center text-xs text-neutral-600 dark:text-neutral-300">
+                  By clicking continue, you agree to our <a href="#" className="underline">Terms of Service</a> and <a href="#" className="underline">Privacy Policy</a>.
+                </div>
               </div>
             </form>
           )}
           <div className="hidden md:flex flex-col items-center justify-center w-full bg-blue-100 dark:bg-zinc-700">
-          <svg className="w-64 h-64 text-blue-600 dark:text-blue-400" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M12 16C14.2091 16 16 14.2091 16 12C16 9.79086 14.2091 8 12 8C9.79086 8 8 9.79086 8 12C8 14.2091 9.79086 16 12 16Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            <path d="M3 12H4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            <path d="M20 12H21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            <path d="M12 3V4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            <path d="M12 20V21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            <path d="M5.63599 5.63599L6.3428 6.3428" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            <path d="M17.6572 17.6572L18.364 18.364" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            <path d="M5.63599 18.364L6.3428 17.6572" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            <path d="M17.6572 6.3428L18.364 5.63599" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
-          <h2 className="mt-4 text-xl font-semibold text-blue-800 dark:text-blue-300">Unlock Your Mind</h2>
-          <p className="mt-2 text-center text-blue-600 dark:text-blue-400 max-w-xs px-6">
-            Enhance your cognitive abilities through challenging puzzles and brain games
-          </p>
-        </div>
+            <svg className="w-64 h-64 text-blue-600 dark:text-blue-400" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 16C14.2091 16 16 14.2091 16 12C16 9.79086 14.2091 8 12 8C9.79086 8 8 9.79086 8 12C8 14.2091 9.79086 16 12 16Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M3 12H4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M20 12H21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M12 3V4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M12 20V21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M5.63599 5.63599L6.3428 6.3428" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M17.6572 17.6572L18.364 18.364" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M5.63599 18.364L6.3428 17.6572" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M17.6572 6.3428L18.364 5.63599" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            <h2 className="mt-4 text-xl font-semibold text-blue-800 dark:text-blue-300">Unlock Your Mind</h2>
+            <p className="mt-2 text-center text-blue-600 dark:text-blue-400 max-w-xs px-6">
+              Enhance your cognitive abilities through challenging puzzles and brain games
+            </p>
+          </div>
         </CardContent>
       </Card>
       <div className="text-balance text-center text-xs text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 hover:[&_a]:text-primary">

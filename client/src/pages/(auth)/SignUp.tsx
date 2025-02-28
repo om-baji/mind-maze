@@ -11,7 +11,7 @@ const AuthSignup : React.FC = () => {
 
   if(isSignedIn) {
     navigate("/home");
-    toast("Already signed in!")
+    toast.success("Already signed in!")
   }
 
   return (
