@@ -9,6 +9,7 @@ import AuthSignup from './pages/(auth)/SignUp.tsx'
 import { Layout } from './utils/Layout.tsx'
 import SidebarHOC from './utils/SidebarHOC.tsx'
 import Login from './pages/(auth)/Login.tsx'
+import Quiz from './pages/Quiz.tsx'
 
 const router = createBrowserRouter([
   {
@@ -30,6 +31,10 @@ const router = createBrowserRouter([
   {
     path : "/auth",
     element : <Login />
+  },
+  {
+    path : "/quiz",
+    element : <SidebarHOC children={<Quiz />} />
   }
 ])
 

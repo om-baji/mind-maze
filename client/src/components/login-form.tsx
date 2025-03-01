@@ -3,10 +3,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
-import { useSession, useSignIn } from "@clerk/clerk-react";
-import { useEffect, useState } from "react";
+import { useSignIn } from "@clerk/clerk-react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { toast } from "sonner";
 
 export function LoginForm({ className, ...props }: React.ComponentProps<"div">) {
   const { isLoaded, setActive, signIn } = useSignIn();
@@ -14,16 +13,6 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
   const [isPending, setPending] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
-  const { session } = useSession();
-
-  console.log(signIn)
-
-  useEffect(() => {
-    if (session) {
-      navigate("/home");
-      toast("Already logged in");
-    }
-  }, [session]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();

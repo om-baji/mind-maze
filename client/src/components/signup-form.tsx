@@ -1,13 +1,12 @@
+import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { cn } from "@/lib/utils"
-import { useSession, useSignUp } from "@clerk/clerk-react"
-import { useEffect, useState } from "react"
+import { useSignUp } from "@clerk/clerk-react"
+import { useState } from "react"
 import { useNavigate } from "react-router-dom"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import { toast } from "sonner"
 
 export function SignupForm({
   className,
@@ -21,15 +20,6 @@ export function SignupForm({
   const [error, setError] = useState("")
   const [code, setCode] = useState("")
   const navigate = useNavigate()
-
-  const { session } = useSession()
-
-  useEffect(() => {
-    if (session) {
-      navigate("/home")
-      toast("Already logged in")
-    }
-  }, [session])
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();

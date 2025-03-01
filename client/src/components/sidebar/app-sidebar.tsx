@@ -14,6 +14,8 @@ import {
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { useAuth, useUser } from "@clerk/clerk-react"
 import { toast } from "sonner"
+import { useSetAtom } from "jotai"
+import { isAuthAtom } from "@/store/authAtom"
 
 const items = [
     {
@@ -36,10 +38,12 @@ const items = [
 export function AppSidebar() {
     const { signOut } = useAuth()
     const { user, isLoaded } = useUser()
+    const setAuth = useSetAtom(isAuthAtom)
 
     const onSignOut = async () => {
         try {
             await signOut({ redirectUrl: "/login" })
+            setAuth(false)
         } catch (error) {
             toast.error("Sign out failed!", { description: error instanceof Error ? error.message : "Something went wrong!" })
         }
