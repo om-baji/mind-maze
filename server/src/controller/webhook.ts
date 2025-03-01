@@ -35,12 +35,13 @@ export class UserWebhook {
           const prisma = getPrismaClient(c.env.DATABASE_URL);
           const email = event.data.email_addresses[0].email_address;
           const userId = event.data.id;
-          await prisma.user.create({
+          const res = await prisma.user.create({
             data: {
               id : userId,
               email,
             },
           });
+          console.log(res)
         }
 
         return c.json(
