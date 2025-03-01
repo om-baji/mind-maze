@@ -2,6 +2,7 @@ import { formSchema, formValues } from '@/models/formSchema';
 import { subjects, subjectType } from '@/utils/subjects';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { toast } from 'sonner';
 import { Button } from './ui/button';
 import {
   Form,
@@ -24,7 +25,6 @@ import {
 } from "./ui/select";
 import { Textarea } from './ui/textarea';
 
-
 const QuizForm = () => {
 
   const form = useForm({
@@ -43,7 +43,11 @@ const QuizForm = () => {
 
   const onSubmit = async (values : formValues) => {
     console.log(values)
-    
+    try {
+      
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : String(error))
+    }
   }
 
   return (

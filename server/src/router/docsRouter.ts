@@ -5,7 +5,12 @@ const docsRouter = new Hono();
 
 docsRouter.get("/", async (c : Context) => {
 
-    return c.json(swaggerConfig);
+    console.log("Control reached")
+
+    return c.json({
+        success : true,
+        config : swaggerConfig
+    });
 })
 
 export default docsRouter;
