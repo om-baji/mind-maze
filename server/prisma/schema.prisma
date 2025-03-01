@@ -14,8 +14,23 @@ datasource db {
 }
 
 model User {
-  id        String     @id
+  id        String   @id
   name      String?
-  email     String     @unique
-  createdAt DateTime   @default(now())
+  email     String   @unique
+  createdAt DateTime @default(now())
+  quizes    Quiz[]
+}
+
+model Quiz {
+  id           String  @id @default(cuid())
+  title        String
+  description  String?
+  numQuestions Int
+  timeLimit    Int
+  passingScore Int
+  difficulty   String
+  subject      String
+
+  User   User   @relation(fields: [userId], references: [id])
+  userId String
 }
