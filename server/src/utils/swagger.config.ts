@@ -1,7 +1,7 @@
 const swaggerConfig = {
   openapi: '3.0.0',
   info: {
-    title: 'MCQ Platform API',
+    title: 'Mind Maze Platform API',
     version: '1.0.0',
     description: 'API documentation for Multiple Choice Questions Platform',
     contact: {

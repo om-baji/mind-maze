@@ -9,6 +9,6 @@ const geminiRouter = new Hono();
 //   await next();
 // };
 
-geminiRouter.post("/", GeminiCont.getQuestion);
+geminiRouter.post("/question", GeminiCont.getQuestion);
 
 export default geminiRouter;

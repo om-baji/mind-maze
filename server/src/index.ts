@@ -7,7 +7,12 @@ import quizRouter from './router/quizRouter'
 
 const app = new Hono()
 
-app.use("*", cors())
+app.use(cors({
+  origin : "http://localhost:5173",
+  allowMethods : ["GET","POST","OPTIONS","DELETE","PUT"],
+  credentials : true,
+  // allowHeaders : [;]
+}))
 
 app.get('/', (c) => {
   return c.text('Hello Hono!')
@@ -20,7 +25,7 @@ app.get("/health", async (c : Context) => {
 })
 
 app.route("/api/v1", userRouter);
-app.route("/api/genAi", geminiRouter);
+app.route("/api/gemini", geminiRouter);
 app.route("/api/docs", docsRouter);
 app.route("/api/quiz",quizRouter);
 
