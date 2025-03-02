@@ -1,4 +1,4 @@
-import { ChevronDown, LayoutDashboardIcon, NotebookIcon, PencilIcon, User2 } from "lucide-react"
+import { ChevronDown, CpuIcon, LayoutDashboardIcon, NotebookIcon, PencilIcon, User2 } from "lucide-react"
 import {
     Sidebar,
     SidebarContent,
@@ -32,6 +32,11 @@ const items = [
         title: "Quiz",
         url: "/quiz",
         icon: NotebookIcon
+    },
+    {
+        title: "Configs",
+        url: "/config",
+        icon: CpuIcon
     }
 ]
 

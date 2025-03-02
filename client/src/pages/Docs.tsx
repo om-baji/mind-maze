@@ -1,5 +1,4 @@
 import { useSwagger } from '@/hooks/useSwagger'
-import {swaggerConfig }from '@/utils/swagger.config'
 import { Loader2 } from 'lucide-react'
 import React from 'react'
 import SwaggerUI from "swagger-ui-react"
@@ -28,7 +27,7 @@ const Docs: React.FC = () => {
         )
     }
 
-    return <SwaggerUI spec={swaggerConfig} />;
+    return <SwaggerUI spec={swagger} />;
 
 }
 

@@ -12,6 +12,7 @@ import Login from './pages/(auth)/Login.tsx'
 import Quiz from './pages/Quiz.tsx'
 import QuizPage from './pages/QuizPage.tsx'
 import Docs from './pages/Docs.tsx'
+import QuizConfig from './components/quiz/quizConfig.tsx'
 
 const router = createBrowserRouter([
   {
@@ -45,6 +46,10 @@ const router = createBrowserRouter([
   {
     path : "/docs",
     element : <Docs />
+  },
+  {
+    path : "/config",
+    element : <SidebarHOC children={<QuizConfig />} />
   }
 ])
 

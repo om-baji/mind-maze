@@ -12,7 +12,6 @@ const QuizComp = ({timeLimit,numQuestions,subject} : quizType) => {
         <Button className='p-4 rounded-md bg-zinc-900 text-white font-semibold'>Submit</Button>
       </div>
 
-
         <QuestionBox numQuestions={parseInt(numQuestions)}/>
     </div>
   )

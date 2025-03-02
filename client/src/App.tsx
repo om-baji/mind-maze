@@ -59,6 +59,7 @@ const App: React.FC = () => {
             <span className="px-3 py-1 bg-white dark:bg-zinc-900 rounded-full">TypeScript</span>
             <span className="px-3 py-1 bg-white dark:bg-zinc-900 rounded-full">Prisma</span>
             <span className="px-3 py-1 bg-white dark:bg-zinc-900 rounded-full">PostgreSQL</span>
+            <span className="px-3 py-1 bg-white dark:bg-zinc-900 rounded-full">Redis</span>
           </div>
         </div>
       </div>

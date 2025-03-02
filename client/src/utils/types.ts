@@ -8,3 +8,9 @@ export type quizType = {
     numQuestions: string,
     subject: string;
 }
+
+export type questionType = {
+    question : string,
+    options : string[],
+    correct_answer : string;
+}

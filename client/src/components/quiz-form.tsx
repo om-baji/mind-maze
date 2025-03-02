@@ -1,6 +1,9 @@
 import { formSchema, formValues } from '@/models/formSchema';
+import { authId } from '@/store/userAtom';
+import { axiosInstance } from '@/utils/axiosInstance';
 import { subjects, subjectType } from '@/utils/subjects';
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useAtomValue } from 'jotai';
 import { useForm } from "react-hook-form";
 import { toast } from 'sonner';
 import { Button } from './ui/button';
@@ -27,6 +30,8 @@ import { Textarea } from './ui/textarea';
 
 const QuizForm = () => {
 
+  const userId = useAtomValue(authId)
+
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -40,11 +45,20 @@ const QuizForm = () => {
     },
   });
 
+  const onSubmit = async (values: formValues) => {
 
-  const onSubmit = async (values : formValues) => {
-    console.log(values)
     try {
-      
+      await axiosInstance.post(`/api/quiz?id=${userId}`, {
+        title: values.title,
+        description: values.description,
+        subject: values.subject,
+        numQuestions: values.numQuestions,
+        difficulty: values.difficulty,
+        timeLimit: values.timeLimit,
+        passingScore: values.passingScore,
+      })
+
+      toast.success("Quiz config added!")
     } catch (error) {
       toast.error(error instanceof Error ? error.message : String(error))
     }
@@ -109,9 +123,9 @@ const QuizForm = () => {
                         return <SelectGroup>
                           <SelectLabel>{subject.title}</SelectLabel>
                           {subject.topics.map((topic: string) => {
-                            return <SelectItem 
-                            key={topic}
-                            value={topic}>{topic}</SelectItem>
+                            return <SelectItem
+                              key={topic}
+                              value={topic}>{topic}</SelectItem>
                           })}
                         </SelectGroup>
                       })}

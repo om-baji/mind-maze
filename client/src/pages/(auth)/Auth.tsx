@@ -4,12 +4,12 @@ import { useNavigate } from 'react-router-dom'
 import React from 'react'
 import { toast } from 'sonner'
 
-const Auth : React.FC = () => {
+const Auth: React.FC = () => {
 
-  const isSignedIn = useAuthCtx()
+  const { isAuth } = useAuthCtx()
   const navigate = useNavigate();
 
-  if(isSignedIn) {
+  if (isAuth) {
     navigate("/home");
     toast("Already signed in!")
   }
