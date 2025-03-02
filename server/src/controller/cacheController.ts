@@ -153,14 +153,9 @@ export class CacheController {
 
   static async invalidateCache(c: Context) {
     try {
-      const { quizId } = await c.req.json<{ quizId: string }>();
-      if (!quizId) throw new Error("Quiz ID is required");
-
-      MemoryCache.delete(`config:${quizId}`);
-      MemoryCache.delete(`meta:${quizId}`);
-      MemoryCache.delete(`questions:${quizId}`);
-
-      return c.json({ message: "Cache invalidated", quizId, success: true });
+      
+      MemoryCache.clear();
+      return c.json({ message: "Cache invalidated", success: true });
     } catch (error) {
       return c.json({ message: (error as Error).message, success: false });
     }
