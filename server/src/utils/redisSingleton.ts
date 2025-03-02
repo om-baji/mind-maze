@@ -1,28 +1,27 @@
-import { createClient } from "redis";
+import { Redis } from "@upstash/redis";
+import { Context } from "hono";
 
-class RedisSingleton {
-  private static instance: RedisSingleton;
-  private client;
+export class RedisSingleton {
+  private static instance: Redis | null = null;
+  private static DEFAULT_TTL = 3600;
 
-  private constructor() {
-    this.client = createClient();
-    this.client.connect();
-  }
+  private constructor() {}
 
-  static getInstance(): RedisSingleton {
-    if (!RedisSingleton.instance) {
-      RedisSingleton.instance = new RedisSingleton();
+  static getInstance(c: Context): Redis {
+    if (!this.instance) {
+      const url = c.env?.UPSTASH_REDIS_REST_URL;
+      const token = c.env?.UPSTASH_REDIS_REST_TOKEN;
+
+      if (!url || !token) {
+        throw new Error("Missing Redis environment variables");
+      }
+
+      this.instance = new Redis({ url, token });
     }
-    return RedisSingleton.instance;
+    return this.instance;
   }
-
-  async setData<T, U>(key: T, value: U) {
-    await this.client.set(String(key), JSON.stringify(value));
-  }
-
-  async getData<T>(key: T): Promise<string | null> {
-    return await this.client.get(String(key));
+  
+  static getTtl(): number {
+    return this.DEFAULT_TTL;
   }
 }
-
-export const redisInstance = RedisSingleton.getInstance();

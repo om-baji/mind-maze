@@ -48,8 +48,12 @@ const swaggerConfig = {
     schemas: {
       Quiz: {
         type: 'object',
-        required: ['title', 'numQuestions', 'description', 'passingScore', 'difficulty', 'subject'],
+        required: ['title', 'numQuestions', 'description', 'passingScore', 'difficulty', 'subject','id'],
         properties: {
+          id : {
+            type: 'string',
+            description: 'quizId'
+          },
           title: {
             type: 'string',
             description: 'Quiz title'
@@ -516,7 +520,7 @@ const swaggerConfig = {
         }
       }
     },
-    "/cache/meta": {
+    "/api/cache/meta": {
       "post": {
         "summary": "Set quiz metadata",
         "description": "Store user metadata for a specific quiz",
@@ -577,7 +581,7 @@ const swaggerConfig = {
         }
       }
     },
-    "/cache/meta/{id}": {
+    "/api/cache/meta/{id}": {
       "get": {
         "summary": "Get quiz metadata",
         "description": "Retrieve user metadata for a specific quiz",
@@ -644,7 +648,7 @@ const swaggerConfig = {
         }
       }
     },
-    "/cache/quiz": {
+    "/api/cache/quiz": {
       "post": {
         "summary": "Cache a quiz",
         "description": "Store a quiz in the cache",
@@ -710,7 +714,7 @@ const swaggerConfig = {
         }
       }
     },
-    "/cache/quiz/{id}": {
+    "/api/cache/quiz/{id}": {
       "get": {
         "summary": "Get cached quiz",
         "description": "Retrieve a quiz from the cache",
@@ -769,7 +773,7 @@ const swaggerConfig = {
         }
       }
     },
-    "/cache/questions": {
+    "/api/cache/questions": {
       "post": {
         "summary": "Cache quiz questions",
         "description": "Store questions for a specific quiz",
@@ -833,7 +837,7 @@ const swaggerConfig = {
         }
       }
     },
-    "/cache/questions/{id}": {
+    "/api/cache/questions/{id}": {
       "get": {
         "summary": "Get cached quiz questions",
         "description": "Retrieve questions for a specific quiz",
