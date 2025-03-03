@@ -3,17 +3,20 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useQuizConfig } from "@/hooks/useQuizConfig";
 import { formValues } from "@/models/formSchema";
+import { configAtom } from "@/store/quizconfig.atom";
 import { authId } from "@/store/userAtom";
 import { axiosInstance } from "@/utils/axiosInstance";
-import { useAtomValue } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
 import { BarChart, BookOpen, Clock, List } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 const QuizConfig = () => {
   const userId = useAtomValue(authId);
+  const setConfig = useSetAtom(configAtom)
+
   const navigate = useNavigate()
-  const { quizConfig, isPending, error } = useQuizConfig(userId as string);
+  const { quizConfig, isPending, error } = useQuizConfig(userId);
 
   const onDelete = async (quizId: string) => {
     try {
@@ -29,7 +32,7 @@ const QuizConfig = () => {
   const onSolve = async (quizBody: formValues) => {
     try {
 
-      await axiosInstance.post("/api/cache/quiz", quizBody)
+      setConfig(quizBody)
 
       toast.success("Done!")
 

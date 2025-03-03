@@ -31,6 +31,7 @@
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
     "jotai": "^2.12.1",
+    "jotai-cache": "^0.5.0",
     "lucide-react": "^0.476.0",
     "next-themes": "^0.4.4",
     "react": "^19.0.0",

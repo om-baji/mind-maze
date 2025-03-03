@@ -1,8 +1,9 @@
 import { Clock } from "lucide-react"
 import { useEffect, useState } from "react"
 
-const Timer = ({ time }: {
-    time: number  
+const Timer = ({ time,onTimeExpired }: {
+    time: number,
+    onTimeExpired : () => void;  
 }) => {
     const [timeLeft, setTimeLeft] = useState(time)
 
