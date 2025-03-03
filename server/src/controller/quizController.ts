@@ -11,6 +11,8 @@ export class QuizController {
 
       const { id } = c.req.query();
 
+      console.log(id)
+
       const isValid = QuizSchema.safeParse(body);
 
       if (!isValid.success) throw new Error(isValid.error.message);
