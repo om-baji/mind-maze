@@ -19,7 +19,7 @@ export function useQuiz(quizConfig: formValues) {
                 limit: parseInt(stableQuizConfig.numQuestions, 10),
             });
 
-            setQuestions(res.data.data);
+            setQuestions(JSON.parse(res.data.data));
         } catch (error) {
             setError(error instanceof Error ? error.message : String(error));
         } finally {

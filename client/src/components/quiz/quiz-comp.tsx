@@ -33,6 +33,7 @@ const QuizComp = ({ timeLimit, numQuestions, subject, questions }: quizType) => 
     setQuizCompleted(true);
   };
 
+  console.log("Before : ",questions)
   const answeredCount = Object.keys(userAnswers).length;
   const currentQuestion = questions[currentQuestionIndex];
 

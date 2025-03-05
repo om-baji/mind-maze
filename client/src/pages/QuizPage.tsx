@@ -1,6 +1,7 @@
 import QuizComp from '@/components/quiz/quiz-comp';
 import { useQuiz } from '@/hooks/useQuiz';
 import { configAtom } from '@/store/quizconfig.atom';
+import { questionType } from '@/utils/types';
 import { useAtomValue } from 'jotai';
 import { Loader2 } from 'lucide-react';
 
@@ -54,7 +55,7 @@ const QuizPage = () => {
           timeLimit={quizConfig.timeLimit || 10}
           numQuestions={quizConfig.numQuestions}
           subject={quizConfig.subject}
-          questions={questions}
+          questions={(questions as questionType[])}
         />
       ) : (
         <div className="bg-white p-8 rounded-lg shadow-2xl text-center">
