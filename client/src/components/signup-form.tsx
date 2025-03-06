@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { cn } from "@/lib/utils"
-import { useSignUp } from "@clerk/clerk-react"
+import { useSignIn, useSignUp } from "@clerk/clerk-react"
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 
@@ -14,6 +14,7 @@ export function SignupForm({
 }: React.ComponentProps<"div">) {
 
   const { isLoaded, setActive, signUp } = useSignUp()
+  const { signIn } = useSignIn()
   const [email, setEmail] = useState("")
   const [name, setName] = useState("")
   const [isPending, setPending] = useState(false)
@@ -70,12 +71,13 @@ export function SignupForm({
   }
 
   const handleOauth = async () => {
-    if (!isLoaded) return
-    await signUp.authenticateWithRedirect({
+    if (!isLoaded || !signIn) return
+    await signIn.authenticateWithRedirect({
       strategy: "oauth_google",
-      redirectUrl: window.location.origin,
+      redirectUrl: `${window.location.origin}`,
       redirectUrlComplete: `${window.location.origin}/home`
     })
+
   }
 
 

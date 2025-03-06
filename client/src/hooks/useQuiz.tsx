@@ -17,6 +17,7 @@ export function useQuiz(quizConfig: formValues) {
             const res = await axiosInstance.post("/api/gemini/question", {
                 section: stableQuizConfig.subject,
                 limit: parseInt(stableQuizConfig.numQuestions, 10),
+                level : stableQuizConfig.difficulty
             });
 
             setQuestions(JSON.parse(res.data.data));
