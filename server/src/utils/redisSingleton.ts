@@ -3,7 +3,7 @@ import { Context } from "hono";
 
 export class RedisSingleton {
   private static instance: Redis | null = null;
-  private static DEFAULT_TTL = 3600;
+  private static DEFAULT_TTL = 600;
 
   private constructor() {}
 
