@@ -1,14 +1,9 @@
 import { Hono } from "hono";
 import { GeminiCont } from "../controller/geminiController";
+import { requireAuth } from "../../middleware/auth.middleware";
 
 const geminiRouter = new Hono();
 
-// const clerkMiddleware = async (c: Context, next: Next) => {
-//   const auth = ClerkExpressWithAuth();
-//   await new Promise((resolve) => auth(c.req.raw, c.res, resolve));
-//   await next();
-// };
-
-geminiRouter.post("/question", GeminiCont.getQuestion);
+geminiRouter.post("/question", requireAuth ,GeminiCont.getQuestion);
 
 export default geminiRouter;

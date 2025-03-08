@@ -1,10 +1,11 @@
-import { Hono, Context } from 'hono'
-import userRouter from './router/userRouter'
-import geminiRouter from './router/geminiRouter'
-import docsRouter from './router/docsRouter'
+import { clerkMiddleware } from '@hono/clerk-auth'
+import { Context, Hono } from 'hono'
 import { cors } from 'hono/cors'
+import docsRouter from './router/docsRouter'
+import geminiRouter from './router/geminiRouter'
 import quizRouter from './router/quizRouter'
-import cacheRouter from './router/cacheRouter'
+import userRouter from './router/userRouter'
+import resultsRouter from './router/resultsRouter'
 
 const app = new Hono()
 
@@ -17,6 +18,8 @@ app.use('*', cors({
   maxAge: 600,
 }))
 
+app.use("*",clerkMiddleware())
+
 app.get('/', (c) => {
   return c.text('Hello Hono!')
 })
@@ -27,10 +30,12 @@ app.get("/health", async (c : Context) => {
   })
 })
 
-app.route("/api/v1", userRouter);
-app.route("/api/gemini", geminiRouter);
-app.route("/api/docs", docsRouter);
-app.route("/api/quiz",quizRouter);
-app.route("/api/cache",cacheRouter);
+app
+  .basePath("/api/v1")
+      .route("/", userRouter)
+      .route("/gemini", geminiRouter)
+      .route("/docs", docsRouter)
+      .route("/quiz",quizRouter)
+      .route("/results",resultsRouter)
 
 export default app

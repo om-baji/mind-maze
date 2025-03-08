@@ -1,16 +1,24 @@
 import { Context } from "hono";
 import { useGemini } from "../utils/gemini";
 import { RedisSingleton } from "../utils/redisSingleton";
+import {createId} from "@paralleldrive/cuid2"
+import { Question } from "../utils/types";
+import { number } from "zod";
+import { getPrismaClient } from "../utils/db";
 
 export class GeminiCont {
   static async getQuestion(c: Context) {
     try {
+      const prisma = await getPrismaClient(c.env.DATABASE_URL)
       const model = await useGemini(c.env.GEMINI_API_KEY);
       const redisClient = RedisSingleton.getInstance(c);
-
-      const { section, limit, level } = await c.req.json();
+      let attemptId;
+      const { section, limit, level,attemptId : attempt } = await c.req.json();
       const questionLimit = Number(limit) || 1;
-      const cacheKey = `questions:${section}:${questionLimit}:${level}`;
+      
+      attemptId = attemptId ? attempt : createId();
+
+      const cacheKey = `questions:${attemptId}`;
       const cache = await redisClient.get(cacheKey);
 
       if (cache) {
@@ -21,6 +29,20 @@ export class GeminiCont {
 
       const response = await model.generateContent(prompt);
       const questions = response.response.text();
+
+      const map = JSON.parse(getAnswerMap(JSON.parse(questions)))
+
+      await prisma.attempts.create({
+        data  : {
+          attemptId,
+          map
+        }
+      })
+
+      const answerKey = `answers:${attemptId}`
+
+      await redisClient.set(answerKey,map);
+      await redisClient.expire(answerKey,RedisSingleton.getTtl())
 
       await redisClient.set(cacheKey, JSON.stringify(questions));
       await redisClient.expire(cacheKey, RedisSingleton.getTtl());
@@ -33,4 +55,12 @@ export class GeminiCont {
       });
     }
   }
+}
+
+const getAnswerMap = (questions : Question[]) => {
+  const mpp = new Map<number, string>();
+
+  questions.map((question : Question, index) => mpp.set(index, question.correct_option));
+
+  return JSON.stringify(Object.fromEntries(mpp));
 }

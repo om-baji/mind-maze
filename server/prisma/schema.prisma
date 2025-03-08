@@ -18,7 +18,10 @@ model User {
   name      String?
   email     String   @unique
   createdAt DateTime @default(now())
+  attempts     Json?
+
   quizes    Quiz[]
+  userAttempt Attempts[]
 }
 
 model Quiz {
@@ -33,4 +36,12 @@ model Quiz {
 
   User   User   @relation(fields: [userId], references: [id])
   userId String
+}
+
+model Attempts {
+  id String @id @default(cuid())
+  attemptId String
+  map Json
+
+  user User @relation(references: [id], fields: [attemptId])
 }
