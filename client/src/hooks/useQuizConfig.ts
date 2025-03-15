@@ -1,35 +1,34 @@
-import { formValues } from "@/models/formSchema";
 import { axiosInstance } from "@/utils/axiosInstance";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 
-export function useQuizConfig(userId: string | null) {
-  const [config, setConfig] = useState<formValues[]>([]);
-  const [isPending, setIsPending] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
+const getConfig = async (token: string, userId: string) => {
+  try {
+    const res = await axiosInstance.get(`/quiz/bulk?user=${userId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
-  const getConfig = useCallback(async () => {
-    if (!userId) return;
-    setIsPending(true);
-    try {
-      const res = await axiosInstance.get(`/api/quiz/bulk?user=${userId}`);
+    return res.data.data;
+  } catch (error) {
+    throw new Error(error instanceof Error ? error.message : String(error));
+  }
+};
 
-      setConfig(res.data.data);
-    } catch (error) {
-      setError(error instanceof Error ? error.message : String(error));
-    } finally {
-      setIsPending(false);
-    }
-  }, [userId]);
-
-  useEffect(() => {
-    getConfig();
-  }, [getConfig]);
-
-  const quizConfig = useMemo(() => config, [config]);
+export function useQuizConfig(userId: string | null, token: string) {
+  const {
+    data: config,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["userId", userId],
+    queryFn: () => getConfig(token as string, userId as string),
+    staleTime: 1000 * 60 * 5,
+  });
 
   return {
-    quizConfig,
-    isPending,
+    isPending: isLoading,
+    config,
     error,
   };
 }

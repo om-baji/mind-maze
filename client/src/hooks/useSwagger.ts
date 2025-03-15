@@ -1,31 +1,34 @@
 import { axiosInstance } from "@/utils/axiosInstance";
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 
-export function useSwagger() {
-  const [swagger, setSwagger] = useState();
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+async function fetchSwagger(token: string) {
+  try {
+    const res = await axiosInstance.get("/docs", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return res.data.config;
+  } catch (error) {
+    throw new Error(error instanceof Error ? error.message : String(error));
+  }
+}
 
-  useEffect(() => {
-    setIsLoading(true);
-    const getSwagger = async () => {
-      try {
-        const res = await axiosInstance.get("/api/docs");
-        console.log("response : ", res);
-        setSwagger(res.data.config);
-      } catch (error) {
-        setError(error instanceof Error ? error.message : String(error));
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    getSwagger();
-  }, []);
+export function useSwagger(token : string) {
+  
+  const {
+    data: swagger,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["swagger"],
+    queryFn: () => fetchSwagger(token as string),
+    enabled: !!token,
+  });
 
   return {
     swagger,
-    error,
     isLoading,
+    error,
   };
 }
