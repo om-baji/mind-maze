@@ -1,10 +1,9 @@
+import { createId } from "@paralleldrive/cuid2";
 import { Context } from "hono";
+import { getPrismaClient } from "../db/prisma";
 import { useGemini } from "../utils/gemini";
-import { RedisSingleton } from "../utils/redisSingleton";
-import {createId} from "@paralleldrive/cuid2"
+import { RedisSingleton } from "../db/redis.cache";
 import { Question } from "../utils/types";
-import { number } from "zod";
-import { getPrismaClient } from "../utils/db";
 
 export class GeminiCont {
   static async getQuestion(c: Context) {

@@ -1,6 +1,6 @@
 import { Context } from "hono";
-import { RedisSingleton } from "../utils/redisSingleton";
-import { getPrismaClient } from "../utils/db";
+import { RedisSingleton } from "../db/redis.cache";
+import { getPrismaClient } from "../db/prisma";
 
 export class ResultsController {
     static async answerKey(c : Context) {

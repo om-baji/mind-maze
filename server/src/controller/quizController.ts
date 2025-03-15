@@ -1,6 +1,6 @@
 import { Context } from "hono";
 import { QuizSchema } from "../models/quizSchema";
-import { getPrismaClient } from "../utils/db";
+import { getPrismaClient } from "../db/prisma";
 
 export class QuizController {
   static async addQuiz(c: Context) {

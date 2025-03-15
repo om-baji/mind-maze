@@ -1,7 +1,7 @@
 import { Context } from "hono";
 import { Webhook } from "svix";
 import { WebhookEvent } from "@clerk/clerk-sdk-node";
-import { getPrismaClient } from "../utils/db";
+import { getPrismaClient } from "../db/prisma";
 
 export class UserWebhook {
   static async userWebhook(c: Context) {

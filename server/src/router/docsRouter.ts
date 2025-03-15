@@ -1,14 +1,11 @@
-import { Context, Hono } from 'hono';
-import swaggerConfig from '../utils/swagger.config';
+import { Hono } from 'hono'
+import { swaggerUI } from '@hono/swagger-ui'
+import { swaggerConfig } from '../utils/swagger.config'
 
-const docsRouter = new Hono();
+const docsRouter = new Hono()
 
-docsRouter.get("/", async (c : Context) => {
+docsRouter.get('/swaggerConfig', (c) => c.json(swaggerConfig))
 
-    return c.json({
-        success : true,
-        config : swaggerConfig
-    });
-})
+docsRouter.get('/docs', swaggerUI({ url: '/api/v1/swaggerConfig' }))
 
-export default docsRouter;
+export default docsRouter

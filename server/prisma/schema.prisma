@@ -14,13 +14,16 @@ datasource db {
 }
 
 model User {
-  id        String   @id
-  name      String?
-  email     String   @unique
-  createdAt DateTime @default(now())
+  id           String   @id
+  name         String?
+  email        String   @unique
+  createdAt    DateTime @default(now())
   attempts     Json?
+  password     String?
+  accessToken  String?
+  refreshToken String?
 
-  quizes    Quiz[]
+  quizes      Quiz[]
   userAttempt Attempts[]
 }
 
@@ -39,9 +42,15 @@ model Quiz {
 }
 
 model Attempts {
-  id String @id @default(cuid())
+  id        String @id @default(cuid())
   attemptId String
-  map Json
+  map       Json
 
   user User @relation(references: [id], fields: [attemptId])
+}
+
+model Blacklist {
+  id        String   @id @default(cuid())
+  token     String
+  createdAt DateTime @default(now())
 }

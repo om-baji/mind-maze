@@ -1,0 +1,47 @@
+{
+    "$schema": "node_modules/wrangler/config-schema.json",
+    "name": "mcq-redesign",
+    "main": "src/index.ts",
+    "compatibility_date": "2025-02-25",
+    "compatibility_flags": [
+      "nodejs_compat"
+    ],
+    "vars": {
+    //   "MY_VAR": "my-variable"
+        "DATABASE_URL" : "prisma acceelearte url",
+        "WEBHOOK_SECRET" : "clerk webhook secret",
+        "GEMINI_API_KEY" : "gemini_api",
+        "UPSTASH_REDIS_REST_URL" : "upstash/redis url",
+        "UPSTASH_REDIS_REST_TOKEN" : "upstash_redis_token",
+        "CLERK_PUBLISHABLE_KEY" : "clerk_publishable_key",
+        "CLERK_SECRET_KEY" : "clerk_secret",
+        "CLERK_JWT_PUBLIC_KEY" : "jwt_secret_clerk"
+    }
+    // "kv_namespaces": [
+    //   {
+    //     "binding": "MY_KV_NAMESPACE",
+    //     "id": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+    //   }
+    // ],
+    // "r2_buckets": [
+    //   {
+    //     "binding": "MY_BUCKET",
+    //     "bucket_name": "my-bucket"
+    //   }
+    // ],
+    // "d1_databases": [
+    //   {
+    //     "binding": "MY_DB",
+    //     "database_name": "my-database",
+    //     "database_id": ""
+    //   }
+    // ],
+    // "ai": {
+    //   "binding": "AI"
+    // },
+    // "observability": {
+    //   "enabled": true,
+    //   "head_sampling_rate": 1
+    // }
+  }
+  

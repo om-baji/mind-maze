@@ -1,12 +1,14 @@
 import { Hono } from "hono";
-import { UserWebhook } from "../controller/webhook";
+import { UserController } from "../controller/user.controller";
+import { authMiddleware } from "../middleware/auth.middleware";
+import { rateLimiter } from "../middleware/rate.limitter";
 
-const userRouter = new Hono<{
-    Bindings : {
-        DATABASE_URL : string,
-    }
-}>()
-
-userRouter.post("/webhook", UserWebhook.userWebhook);
-
-export default userRouter;
+export const userRouter = new Hono()
+  .post("/login", rateLimiter, UserController.login)
+  .post("/register", rateLimiter, UserController.postUser)
+  .get("/user", rateLimiter, UserController.getUserById)
+  .get("/user/:email", rateLimiter, UserController.getUserByEmail)
+  .post("/logout", rateLimiter, authMiddleware, UserController.logout)
+  .delete("/deleteUser", rateLimiter, UserController.deleteUser)
+  .get("/refresh", rateLimiter, UserController.refresh)
+  .get("/me", rateLimiter, authMiddleware, UserController.me);

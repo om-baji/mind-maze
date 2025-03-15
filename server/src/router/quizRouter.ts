@@ -1,13 +1,12 @@
 import { Hono } from "hono";
 import { QuizController } from "../controller/quizController";
-import { requireAuth } from "../../middleware/auth.middleware";
 
 const quizRouter = new Hono();
 
-quizRouter.post("/", requireAuth ,QuizController.addQuiz);
-quizRouter.get("/", requireAuth ,QuizController.getQuiz);
-quizRouter.get("/bulk", requireAuth ,QuizController.getQuizById);
-quizRouter.delete("/", requireAuth ,QuizController.deleteQuiz);
-quizRouter.put("/", requireAuth ,QuizController.updateQuiz);
+quizRouter.post("/" ,QuizController.addQuiz);
+quizRouter.get("/" ,QuizController.getQuiz);
+quizRouter.get("/bulk" ,QuizController.getQuizById);
+quizRouter.delete("/" ,QuizController.deleteQuiz);
+quizRouter.put("/" ,QuizController.updateQuiz);
 
 export default quizRouter;
