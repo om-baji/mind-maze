@@ -1,26 +1,23 @@
 import { Context, Next } from "hono";
 import { verify } from "hono/jwt";
 import { getPrismaClient } from "../db/prisma";
+import { getCookie } from "hono/cookie";
 
 export const authMiddleware = async (c: Context, next: Next) => {
   try {
     const prisma = getPrismaClient(c.env.DATABASE_URL);
-    const header = c.req.header("Authorization");
-    if (!header)
+    const token = getCookie(c, "access");
+    if (!token)
       return c.json(
-        { message: "No authorization header", success: false },
+        { message: "No authorization cookie", success: false },
         401
       );
-
-    const token = header.split(" ")[1];
-    if (!token)
-      return c.json({ message: "Token missing", success: false }, 401);
 
     const revoked = await prisma.blacklist.findFirst({
       where: { token },
     });
 
-    if(revoked) throw new Error("Token is revoked!")
+    if (revoked) throw new Error("Token is revoked!");
 
     if (!c.env.ACCESS_SECRET)
       return c.json({ message: "Missing secret key", success: false }, 500);
@@ -32,12 +29,7 @@ export const authMiddleware = async (c: Context, next: Next) => {
         403
       );
 
-    const data = {
-      token: token,
-      ...decoded,
-    };
-
-    c.set("jwtPayload", data);
+    c.set("jwtPayload", decoded);
     await next();
   } catch (error) {
     return c.json(

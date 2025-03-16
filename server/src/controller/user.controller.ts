@@ -7,6 +7,7 @@ import { loginSchema, registerSchema } from "../models/user.model";
 import { hash, verifyPassword } from "../utils/password.hash";
 import { generateToken } from "../utils/generateToken";
 import { MapData, UserMapData } from "../utils/types";
+import { getCookie, setCookie } from "hono/cookie";
 
 export class UserController {
   static async postUser(c: Context) {
@@ -57,23 +58,35 @@ export class UserController {
         c.env.REFRESH_SECRET
       );
 
-      console.log("Control Reached!");
-
       const user = await prisma.user.create({
         data: {
           id: userId,
           name,
           email,
           password: hashed,
-          accessToken,
           refreshToken,
         },
+      });
+
+      setCookie(c, "token", refreshToken, {
+        httpOnly: true,
+        secure: true,
+        path: "/",
+        sameSite: "Strict",
+        maxAge: 60 * 60 * 24 * 7,
+      });
+
+      setCookie(c, "access", accessToken, {
+        httpOnly: true,
+        secure: true,
+        path: "/",
+        sameSite: "Strict",
+        maxAge: 60 * 60,
       });
 
       const cacheData = {
         expiry: Math.floor(Date.now() / 1000) + 60 * 60,
         data: {
-          token: accessToken,
           meta: email,
         },
       } as MapData;
@@ -85,12 +98,10 @@ export class UserController {
       return c.json(
         {
           message: "User registered!",
-          token: accessToken,
           user: {
             id: user.id,
             name: user.name,
             email: user.email,
-            refreshToken,
           },
           success: true,
         },
@@ -495,7 +506,7 @@ export class UserController {
       if (!user) {
         return c.json(
           {
-            error: "Invalid credentials",
+            error: "Invalid credentials or no user",
             message: "Invalid email or password",
             success: false,
           },
@@ -503,7 +514,10 @@ export class UserController {
         );
       }
 
-      const isPasswordValid = await verifyPassword(password, user.password as string);
+      const isPasswordValid = await verifyPassword(
+        password,
+        user.password as string
+      );
 
       if (!isPasswordValid) {
         return c.json(
@@ -529,7 +543,6 @@ export class UserController {
       await prisma.user.update({
         where: { id: user.id },
         data: {
-          accessToken,
           refreshToken,
         },
       });
@@ -537,7 +550,6 @@ export class UserController {
       const cacheData = {
         expiry: Math.floor(Date.now() / 1000) + 60 * 60,
         data: {
-          token: accessToken,
           meta: email,
         },
       } as MapData;
@@ -546,10 +558,25 @@ export class UserController {
       await redisClient.set(`access:${user.id}`, cacheData);
       await redisClient.expire(`access:${user.id}`, 60 * 60);
 
+      setCookie(c, "refresh", refreshToken, {
+        httpOnly: true,
+        secure: true,
+        path: "/",
+        sameSite: "Strict",
+        maxAge: 60 * 60 * 24 * 7,
+      });
+
+      setCookie(c, "access", accessToken, {
+        httpOnly: true,
+        secure: true,
+        path: "/",
+        sameSite: "Strict",
+        maxAge: 60 * 60,
+      });
+
       return c.json(
         {
           message: "Login successful!",
-          token: accessToken,
           user: {
             id: user.id,
             name: user.name,
@@ -624,10 +651,10 @@ export class UserController {
       });
 
       await prisma.blacklist.create({
-        data : {
-          token : payload.token
-        }
-      })
+        data: {
+          token: payload.token,
+        },
+      });
 
       MemoryCache.delete(`access:${userId}`);
       await redisClient.del(`access:${userId}`);
@@ -656,7 +683,7 @@ export class UserController {
       const prisma = getPrismaClient(c.env.DATABASE_URL);
       const redisClient = RedisSingleton.getInstance(c);
 
-      const refreshToken = c.req.query("token");
+      const refreshToken = getCookie(c,"refresh");
 
       if (!refreshToken) {
         return c.json(
@@ -670,18 +697,18 @@ export class UserController {
       }
 
       const isRevoked = await prisma.blacklist.findFirst({
-        where : {
-          token : refreshToken
-        }
-      })
+        where: {
+          token: refreshToken,
+        },
+      });
 
-      if(isRevoked) throw new Error("Token is revoked!")
+      if (isRevoked) throw new Error("Token is revoked!");
 
       await prisma.blacklist.create({
-        data : {
-          token : refreshToken
-        }
-      })
+        data: {
+          token: refreshToken,
+        },
+      });
 
       const user = await prisma.user.findFirst({
         where: { refreshToken },
@@ -713,7 +740,6 @@ export class UserController {
       await prisma.user.update({
         where: { id: user.id },
         data: {
-          accessToken,
           refreshToken: newRefreshToken,
         },
       });
@@ -721,7 +747,6 @@ export class UserController {
       const cacheData = {
         expiry: exp,
         data: {
-          token: accessToken,
           meta: user.email,
         },
       } as MapData;

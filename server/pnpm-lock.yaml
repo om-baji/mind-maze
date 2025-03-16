@@ -17,9 +17,6 @@ importers:
       '@google/generative-ai':
         specifier: ^0.22.0
         version: 0.22.0
-      '@hono/clerk-auth':
-        specifier: ^2.0.0
-        version: 2.0.0(@clerk/backend@1.25.1(react@19.0.0))(hono@4.7.2)
       '@hono/swagger-ui':
         specifier: ^0.5.1
         version: 0.5.1(hono@4.7.2)
@@ -38,9 +35,6 @@ importers:
       hono:
         specifier: ^4.7.2
         version: 4.7.2
-      jose:
-        specifier: ^6.0.10
-        version: 6.0.10
       redis:
         specifier: ^4.7.0
         version: 4.7.0
@@ -603,13 +597,6 @@ packages:
     resolution: {integrity: sha512-mLR3PDWCk5O/BWNyDvFDIiwKeXQmFGZ+kJFd9m73QrUPCFREttJyVbBPTW4y9CwTbaltLMDaLDfroCrRv5Bl8Q==}
     engines: {node: '>=18.0.0'}
 
-  '@hono/clerk-auth@2.0.0':
-    resolution: {integrity: sha512-ad+U8jDlBPgXBTv8BRnPrSFC/uX8U0ojiCR77I3WWHm5I9L3/bHsZpQ2lgvLTV3YbJyVmAdKJArEAQiPjodGdA==}
-    engines: {node: '>=16.x.x'}
-    peerDependencies:
-      '@clerk/backend': ^1.0.0
-      hono: '>=3.*'
-
   '@hono/swagger-ui@0.5.1':
     resolution: {integrity: sha512-XpUCfszLJ9b1rtFdzqOSHfdg9pfBiC2J5piEjuSanYpDDTIwpMz0ciiv5N3WWUaQpz9fEgH8lttQqL41vIFuDA==}
     peerDependencies:
@@ -1092,9 +1079,6 @@ packages:
 
   is-arrayish@0.3.2:
     resolution: {integrity: sha512-eVRqCvVlZbuw3GrM63ovNSNAeA1K16kaR/LRY/92w0zxQ5/1YzwblUX652i4Xs9RwAGjW9d9y6X88t8OaAJfWQ==}
-
-  jose@6.0.10:
-    resolution: {integrity: sha512-skIAxZqcMkOrSwjJvplIPYrlXGpxTPnro2/QWTDCxAdWQrSTV5/KqspMWmi5WAx5+ULswASJiZ0a+1B/Lxt9cw==}
 
   js-cookie@3.0.5:
     resolution: {integrity: sha512-cEiJEAEoIbWfCZYKWhVwFuvPX1gETRYPw6LlaTKoxD3s2AkXzkCjnp6h0V77ozyqj0jakteJ4YqDJT830+lVGw==}
@@ -1742,11 +1726,6 @@ snapshots:
 
   '@google/generative-ai@0.22.0': {}
 
-  '@hono/clerk-auth@2.0.0(@clerk/backend@1.25.1(react@19.0.0))(hono@4.7.2)':
-    dependencies:
-      '@clerk/backend': 1.25.1(react@19.0.0)
-      hono: 4.7.2
-
   '@hono/swagger-ui@0.5.1(hono@4.7.2)':
     dependencies:
       hono: 4.7.2
@@ -2199,8 +2178,6 @@ snapshots:
 
   is-arrayish@0.3.2:
     optional: true
-
-  jose@6.0.10: {}
 
   js-cookie@3.0.5: {}
 
