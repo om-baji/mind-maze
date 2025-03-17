@@ -1,13 +1,9 @@
 import { axiosInstance } from "@/utils/axiosInstance";
 import { useQuery } from "@tanstack/react-query";
 
-const getConfig = async (token: string, userId: string) => {
+const getConfig = async (userId: string) => {
   try {
-    const res = await axiosInstance.get(`/quiz/bulk?user=${userId}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const res = await axiosInstance.get(`/quiz/bulk?user=${userId}`);
 
     return res.data.data;
   } catch (error) {
@@ -15,14 +11,14 @@ const getConfig = async (token: string, userId: string) => {
   }
 };
 
-export function useQuizConfig(userId: string | null, token: string) {
+export function useConfig(userId: string) {
   const {
     data: config,
     isLoading,
     error,
   } = useQuery({
-    queryKey: ["userId", userId],
-    queryFn: () => getConfig(token as string, userId as string),
+    queryKey: ["config", userId],
+    queryFn: () => getConfig(userId),
     staleTime: 1000 * 60 * 5,
   });
 

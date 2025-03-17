@@ -1,34 +1,22 @@
 import { axiosInstance } from "@/utils/axiosInstance";
 import { useQuery } from "@tanstack/react-query";
 
-async function fetchSwagger(token: string) {
+async function fetchSwagger() {
   try {
-    const res = await axiosInstance.get("/docs", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const res = await axiosInstance.get("/swaggerConfig");
+    if (!res.data || !res.data.config) {
+      throw new Error("Invalid Swagger configuration received");
+    }
     return res.data.config;
   } catch (error) {
-    throw new Error(error instanceof Error ? error.message : String(error));
+    throw new Error(error instanceof Error ? error.message : "Failed to fetch Swagger config");
   }
 }
 
-export function useSwagger(token : string) {
-  
-  const {
-    data: swagger,
-    isLoading,
-    error,
-  } = useQuery({
+export function useSwagger() {
+  return useQuery({
     queryKey: ["swagger"],
-    queryFn: () => fetchSwagger(token as string),
-    enabled: !!token,
+    queryFn: fetchSwagger,
+    retry: false,
   });
-
-  return {
-    swagger,
-    isLoading,
-    error,
-  };
 }

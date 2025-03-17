@@ -2,7 +2,7 @@ import { formValues } from "@/models/formSchema";
 import { axiosInstance } from "@/utils/axiosInstance";
 import { useQuery } from "@tanstack/react-query";
 
-async function fetchQuiz(quizConfig: formValues, token: string) {
+async function fetchQuiz(quizConfig: formValues) {
   try {
     const res = await axiosInstance.post(
       "/gemini/question",
@@ -11,11 +11,6 @@ async function fetchQuiz(quizConfig: formValues, token: string) {
         limit: parseInt(quizConfig.numQuestions, 10),
         level: quizConfig.difficulty,
       },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
     );
     return JSON.parse(res.data.data);
   } catch (error) {
@@ -23,14 +18,14 @@ async function fetchQuiz(quizConfig: formValues, token: string) {
   }
 }
 
-export function useQuiz(quizConfig: formValues, token: string) {
+export function useQuiz(quizConfig: formValues) {
   const {
     data: questions,
     isLoading,
     error,
   } = useQuery({
     queryKey: ["quiz", quizConfig],
-    queryFn: () => fetchQuiz(quizConfig, token as string),
+    queryFn: () => fetchQuiz(quizConfig),
     staleTime: 1000 * 60 * 5,
   });
 
