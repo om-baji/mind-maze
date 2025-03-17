@@ -685,7 +685,7 @@ export class UserController {
       const prisma = getPrismaClient(c.env.DATABASE_URL);
       const redisClient = RedisSingleton.getInstance(c);
 
-      const refreshToken = getCookie(c,"refresh");
+      const refreshToken = getCookie(c,"token");
       const accessCookie = getCookie(c,"access");
 
       if (!refreshToken) {
@@ -773,7 +773,7 @@ export class UserController {
         maxAge: 60 * 60 ,
       })
 
-      setCookie(c,"token", newRefreshToken, {
+      setCookie(c,"refresh", newRefreshToken, {
         httpOnly: true,
         secure: true,
         path: "/",
