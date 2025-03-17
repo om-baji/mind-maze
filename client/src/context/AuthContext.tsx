@@ -1,20 +1,11 @@
 import { isAuthAtom } from "@/store/authAtom";
+import { userAtom } from "@/store/metadata.atom";
 import { authId } from "@/store/userAtom";
-import { useAuth } from "@clerk/clerk-react";
 import { useAtomValue, useSetAtom } from "jotai";
-import { useEffect } from "react";
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-    const { isLoaded, isSignedIn, userId } = useAuth();
-    const setAuth = useSetAtom(isAuthAtom);
-    const setUserId = useSetAtom(authId);
-
-    useEffect(() => {
-        if (isLoaded) {
-            setAuth(isSignedIn);
-            setUserId(userId ?? null);
-        }
-    }, [isLoaded, isSignedIn, userId, setAuth, setUserId]);
+    
+    const setMeta = useSetAtom(userAtom)
 
     return <>{children}</>;
 }

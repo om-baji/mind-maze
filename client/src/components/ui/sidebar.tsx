@@ -142,8 +142,7 @@ function SidebarProvider({
           )}
           {...props}
         >
-          {/* Add width constraint here */}
-          <div className="w-64 border-r hidden md:block">
+          <div className="w-64 border-r md:block">
             {children}
           </div>
         </div>

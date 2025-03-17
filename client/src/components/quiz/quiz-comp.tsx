@@ -33,11 +33,8 @@ const QuizComp = ({ timeLimit, numQuestions, subject, questions }: quizType) => 
     setQuizCompleted(true);
   };
 
-  console.log("Before : ",questions)
   const answeredCount = Object.keys(userAnswers).length;
   const currentQuestion = questions[currentQuestionIndex];
-
-  console.log("Current ques : ", currentQuestion)
 
   return (
     <div className="flex flex-col gap-6 p-8 shadow-2xl rounded-lg bg-white mx-auto">

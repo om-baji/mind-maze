@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useQuizConfig } from "@/hooks/useQuizConfig";
+import { useQuizConfig } from "@/hooks/useConfig";
 import { formValues } from "@/models/formSchema";
 import { configAtom } from "@/store/quizconfig.atom";
 import { authId } from "@/store/userAtom";

@@ -1,5 +1,5 @@
-import { Clock } from "lucide-react"
-import { useEffect, useState } from "react"
+import { Clock } from "lucide-react";
+import { useEffect, useState } from "react";
 
 const Timer = ({ time,onTimeExpired }: {
     time: number,
@@ -23,6 +23,8 @@ const Timer = ({ time,onTimeExpired }: {
 
     const minutes = Math.floor(timeLeft / 60)
     const seconds = timeLeft % 60
+
+    if(minutes == 0 && seconds == 0) onTimeExpired();
 
     return (
         <div className="flex justify-center gap-2">

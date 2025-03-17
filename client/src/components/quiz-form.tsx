@@ -48,7 +48,7 @@ const QuizForm = () => {
   const onSubmit = async (values: formValues) => {
 
     try {
-      await axiosInstance.post(`/api/quiz?id=${userId}`, {
+      await axiosInstance.post(`/quiz?id=${userId}`, {
         title: values.title,
         description: values.description,
         subject: values.subject,

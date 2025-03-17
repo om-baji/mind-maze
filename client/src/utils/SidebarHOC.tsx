@@ -9,9 +9,9 @@ const SidebarHOC = ({ children }: {
   return (
     <>
       <div className="flex h-screen">
-        <SidebarProvider>
+        {/* <SidebarProvider>
           <AppSidebar />
-        </SidebarProvider>
+        </SidebarProvider> */}
 
 
         <div className="flex flex-1 flex-col">
