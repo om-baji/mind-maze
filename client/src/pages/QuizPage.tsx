@@ -18,7 +18,7 @@ const QuizPage = () => {
       <div className="flex flex-col items-center justify-center h-screen text-center">
         <div className="bg-white p-8 rounded-lg shadow-2xl max-w-md">
           <h2 className="text-xl font-bold text-zinc-900 mb-4">Error Loading Quiz</h2>
-          <p className="text-zinc-600 mb-6">{error}</p>
+          <p className="text-zinc-600 mb-6">{String(error)}</p>
           <button
             onClick={() => window.location.reload()}
             className="bg-zinc-900 text-white px-4 py-2 rounded-md hover:bg-zinc-800 transition-colors"

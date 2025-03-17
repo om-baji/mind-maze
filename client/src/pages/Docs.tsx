@@ -1,34 +1,28 @@
 import { useSwagger } from '@/hooks/useSwagger'
 import { Loader2 } from 'lucide-react'
 import React from 'react'
-import SwaggerUI from "swagger-ui-react"
-import "swagger-ui-react/swagger-ui.css"
+import SwaggerUI from 'swagger-ui-react'
 
 const Docs: React.FC = () => {
-
-    const { swagger,isLoading, error } = useSwagger()
-
-    console.log(swagger)
-
+    const { isLoading, error, data } = useSwagger()
+    console.log(data)
     if (isLoading) {
         return (
-            <div>
-                <Loader2 className='animate-spin' />
-                <span>Loading API docs...</span>
+            <div className="flex justify-center items-center h-screen">
+                <Loader2 className="animate-spin w-6 h-6" />
             </div>
         )
     }
 
     if (error) {
         return (
-            <div>
-                <span className='text-red-700'>Error loading API docs</span>
+            <div className="text-red-500 text-center">
+                Failed to load API documentation.
             </div>
         )
     }
 
-    return <SwaggerUI spec={swagger} />;
-
+    return <SwaggerUI spec={data} />
 }
 
 export default Docs

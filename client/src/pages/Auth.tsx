@@ -1,8 +1,8 @@
-import { LoginForm } from '@/components/login-form'
-import { useAuthCtx } from '@/context/AuthContext'
-import { useNavigate } from 'react-router-dom'
+import AuthForm from '@/components/form-comp/auth-form'
+import { useAuthCtx } from '@/context/AuthContext';
 import React from 'react'
-import { toast } from 'sonner'
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 
 const Auth: React.FC = () => {
 
@@ -16,7 +16,7 @@ const Auth: React.FC = () => {
 
   return (
     <div className='flex justify-center items-center h-screen'>
-      <LoginForm />
+      <AuthForm />
     </div>
   )
 }
