@@ -8,6 +8,8 @@ import { hash, verifyPassword } from "../utils/password.hash";
 import { generateToken } from "../utils/generateToken";
 import { MapData, UserMapData } from "../utils/types";
 import { getCookie, setCookie } from "hono/cookie";
+import { verify } from "hono/jwt";
+import { JWTPayload } from "hono/utils/jwt/types";
 
 export class UserController {
   static async postUser(c: Context) {
@@ -558,7 +560,7 @@ export class UserController {
       await redisClient.set(`access:${user.id}`, cacheData);
       await redisClient.expire(`access:${user.id}`, 60 * 60);
 
-      setCookie(c, "refresh", refreshToken, {
+      setCookie(c, "token", refreshToken, {
         httpOnly: true,
         secure: true,
         path: "/",
@@ -684,6 +686,7 @@ export class UserController {
       const redisClient = RedisSingleton.getInstance(c);
 
       const refreshToken = getCookie(c,"refresh");
+      const accessCookie = getCookie(c,"access");
 
       if (!refreshToken) {
         return c.json(
@@ -704,14 +707,32 @@ export class UserController {
 
       if (isRevoked) throw new Error("Token is revoked!");
 
-      await prisma.blacklist.create({
-        data: {
-          token: refreshToken,
-        },
+      const blacklistData = [{ token: refreshToken }];
+      if (accessCookie) {
+        blacklistData.push({ token: accessCookie });
+      }
+
+      await prisma.blacklist.createMany({
+        data: blacklistData,
       });
 
+      const decoded = await verify(refreshToken,c.env.REFRESH_SECRET) as JWTPayload
+
+      if(!decoded) {
+        return c.json(
+          {
+            error: "Invalid refresh token",
+            message: "Refresh token is invalid or expired",
+            success: false,
+          },
+          401
+        );
+      }
+
       const user = await prisma.user.findFirst({
-        where: { refreshToken },
+        where: { 
+          id : decoded.id as string
+         },
       });
 
       if (!user) {
@@ -744,6 +765,22 @@ export class UserController {
         },
       });
 
+      setCookie(c,"access", accessToken, {
+        httpOnly: true,
+        secure: true,
+        path: "/",
+        sameSite: "Strict",
+        maxAge: 60 * 60 ,
+      })
+
+      setCookie(c,"token", newRefreshToken, {
+        httpOnly: true,
+        secure: true,
+        path: "/",
+        sameSite: "Strict",
+        maxAge: 60 * 60 * 24 * 7,
+      })
+
       const cacheData = {
         expiry: exp,
         data: {
@@ -758,12 +795,10 @@ export class UserController {
       return c.json(
         {
           message: "Token refreshed successfully!",
-          token: accessToken,
           user: {
             id: user.id,
             name: user.name,
             email: user.email,
-            refreshToken: newRefreshToken,
           },
           success: true,
         },
