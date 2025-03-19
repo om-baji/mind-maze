@@ -19,5 +19,5 @@ export type questionType = {
 export type metadata = {
     id : string,
     email : string,
-    name : string,
+    name? : string,
 }

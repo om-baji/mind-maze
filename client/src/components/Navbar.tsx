@@ -1,23 +1,31 @@
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Bell, Layers, Search } from "lucide-react";
+import { Bell, Layers, Search, Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Input } from "./ui/input";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const Navbar = ({ children }: {
   children: React.ReactNode
 }) => {
-
-  const [scrolled, setScrolled] = useState(false)
+  const [scrolled, setScrolled] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     const handleScroll = () => {
-      setScrolled(window.scrollY > 10)
-    }
+      setScrolled(window.scrollY > 10);
+    };
 
-    window.addEventListener("scroll", handleScroll)
-    return () => window.removeEventListener("scroll", handleScroll)
-  }, [])
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  useEffect(() => {
+    if (!isMobile && mobileMenuOpen) {
+      setMobileMenuOpen(false);
+    }
+  }, [isMobile, mobileMenuOpen]);
 
   return (
     <div>
@@ -67,46 +75,55 @@ const Navbar = ({ children }: {
               <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-primary"></span>
             </Button>
 
-            {/* <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-                    <Avatar className="h-8 w-8">
-                      <AvatarImage src="/placeholder.svg?height=32&width=32" alt="@user" />
-                      <AvatarFallback>U</AvatarFallback>
-                    </Avatar>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-56" align="end" forceMount>
-                  <DropdownMenuLabel className="font-normal">
-                    <div className="flex flex-col space-y-1">
-                      <p className="text-sm font-medium leading-none">Alex Johnson</p>
-                      <p className="text-xs leading-none text-muted-foreground">alex@example.com</p>
-                    </div>
-                  </DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem>
-                    <User className="mr-2 h-4 w-4" />
-                    <span>Profile</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <Settings className="mr-2 h-4 w-4" />
-                    <span>Settings</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem>
-                    <LogOut className="mr-2 h-4 w-4" />
-                    <span>Log out</span>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu> */}
+            {isMobile && (
+              <Button
+                size="icon"
+                variant="ghost"
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+              >
+                {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+              </Button>
+            )}
           </div>
         </div>
+
+        {isMobile && (
+          <div
+            className={cn(
+              "overflow-hidden transition-all duration-300",
+              mobileMenuOpen ? "max-h-64" : "max-h-0"
+            )}
+          >
+            <div className="flex flex-col space-y-4 px-4 pb-6 pt-2">
+              <div className="relative flex items-center mb-2">
+                <Search className="absolute left-2.5 h-4 w-4 text-muted-foreground" />
+                <Input
+                  type="search"
+                  placeholder="Search..."
+                  className="w-full pl-8 bg-background/50 border-muted-foreground/20 focus-visible:ring-primary/50"
+                />
+              </div>
+              <a href="/" className="text-sm font-medium hover:text-foreground transition-colors px-2 py-2 rounded-md hover:bg-muted">
+                Dashboard
+              </a>
+              <a href="#" className="text-sm font-medium hover:text-foreground transition-colors px-2 py-2 rounded-md hover:bg-muted">
+                Projects
+              </a>
+              <a href="#" className="text-sm font-medium hover:text-foreground transition-colors px-2 py-2 rounded-md hover:bg-muted">
+                Team
+              </a>
+              <a href="#" className="text-sm font-medium hover:text-foreground transition-colors px-2 py-2 rounded-md hover:bg-muted">
+                Reports
+              </a>
+            </div>
+          </div>
+        )}
       </header>
       <main>
         {children}
       </main>
     </div>
-
   );
 };
 
