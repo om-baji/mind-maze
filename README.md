@@ -93,20 +93,20 @@ cd mcq-redesign
 2. Install frontend dependencies:
 ```bash
 cd client
-npm install
+pnpm install
 ```
 
 3. Configure environment variables for frontend:
 ```bash
 # Create .env.local file in client directory
 VITE_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
-VITE_API_URL=your_api_url
+VITE_HONO_URL=your_api_url
 ```
 
 4. Install backend dependencies:
 ```bash
 cd ../server
-npm install
+pnpm install
 ```
 
 5. Configure backend environment variables:
@@ -119,6 +119,21 @@ UPSTASH_REDIS_TOKEN=your_upstash_redis_token
 GEMINI_API_KEY=your_gemini_api_key
 CLERK_SECRET_KEY=your_clerk_secret_key
 CLERK_WEBHOOK_SECRET=your_clerk_webhook_secret
+```
+
+6. Add wrangler.jsonc file (a sample is given)
+
+```bash
+"vars": {
+        "DATABASE_URL" : "prisma acceelearte url",
+        "WEBHOOK_SECRET" : "clerk webhook secret",
+        "GEMINI_API_KEY" : "gemini_api",
+        "UPSTASH_REDIS_REST_URL" : "upstash/redis url",
+        "UPSTASH_REDIS_REST_TOKEN" : "upstash_redis_token",
+        "CLERK_PUBLISHABLE_KEY" : "clerk_publishable_key",
+        "CLERK_SECRET_KEY" : "clerk_secret",
+        "CLERK_JWT_PUBLIC_KEY" : "jwt_secret_clerk",
+  }
 ```
 
 6. Generate Prisma client:

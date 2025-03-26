@@ -74,16 +74,16 @@ export class UserController {
         httpOnly: true,
         secure: true,
         path: "/",
-        sameSite: "Strict",
-        maxAge: 60 * 60 * 24 * 7,
+        sameSite: "None",
+        maxAge: 60 * 60 * 24 * 7 ,
       });
 
       setCookie(c, "access", accessToken, {
         httpOnly: true,
         secure: true,
         path: "/",
-        sameSite: "Strict",
-        maxAge: 60 * 60,
+        sameSite: "None",
+        maxAge: 60 * 60 ,
       });
 
       const cacheData = {
@@ -564,7 +564,7 @@ export class UserController {
         httpOnly: true,
         secure: true,
         path: "/",
-        sameSite: "Strict",
+        sameSite: "None",
         maxAge: 60 * 60 * 24 * 7,
       });
 
@@ -572,8 +572,8 @@ export class UserController {
         httpOnly: true,
         secure: true,
         path: "/",
-        sameSite: "Strict",
-        maxAge: 60 * 60,
+        sameSite: "None",
+        maxAge: 60 * 60 ,
       });
 
       return c.json(
@@ -769,16 +769,16 @@ export class UserController {
         httpOnly: true,
         secure: true,
         path: "/",
-        sameSite: "Strict",
-        maxAge: 60 * 60 ,
+        sameSite: "None",
+        maxAge: 60 * 60  ,
       })
 
       setCookie(c,"refresh", newRefreshToken, {
         httpOnly: true,
         secure: true,
         path: "/",
-        sameSite: "Strict",
-        maxAge: 60 * 60 * 24 * 7,
+        sameSite: "None",
+        maxAge: 60 * 60 * 24 * 7 ,
       })
 
       const cacheData = {
