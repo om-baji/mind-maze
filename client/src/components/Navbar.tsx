@@ -1,9 +1,17 @@
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Bell, Layers, Search, Menu, X } from "lucide-react";
+import { Bell, Layers, Search, Menu, X, User, LogOut } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Input } from "./ui/input";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useAtom } from "jotai";
+import { userAtom } from "@/store/auth.store";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const Navbar = ({ children }: {
   children: React.ReactNode
@@ -11,6 +19,8 @@ const Navbar = ({ children }: {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const isMobile = useIsMobile();
+
+  const [user] = useAtom(userAtom);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -49,14 +59,16 @@ const Navbar = ({ children }: {
             <a href="/" className="text-sm font-medium hover:text-foreground transition-colors">
               Dashboard
             </a>
-            <a href="#" className="text-sm font-medium hover:text-foreground transition-colors">
-              Projects
+            <a href="/config" className="text-sm font-medium hover:text-foreground transition-colors">
+              Saved Configs
             </a>
-            <a href="#" className="text-sm font-medium hover:text-foreground transition-colors">
-              Team
-            </a>
-            <a href="#" className="text-sm font-medium hover:text-foreground transition-colors">
+            
+            <a href="/reports" className="text-sm font-medium hover:text-foreground transition-colors">
               Reports
+            </a>
+
+            <a href="#" className="text-sm font-medium hover:text-foreground transition-colors">
+              Contact Us
             </a>
           </div>
 
@@ -74,6 +86,29 @@ const Navbar = ({ children }: {
               <Bell className="h-5 w-5" />
               <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-primary"></span>
             </Button>
+
+            {user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="flex items-center gap-2 h-8 px-2">
+                    <div className="size-8 rounded-full bg-primary/10 flex items-center justify-center">
+                      <User className="size-4 text-primary" />
+                    </div>
+                    <span className="text-sm hidden md:block max-w-28 truncate">{user.email}</span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48">
+                  <DropdownMenuItem className="flex items-center gap-2 cursor-pointer">
+                    <LogOut className="size-4" />
+                    <span>Logout</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Button size="sm" variant="default">
+                Login
+              </Button>
+            )}
 
             {isMobile && (
               <Button

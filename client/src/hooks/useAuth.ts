@@ -1,52 +1,69 @@
+import {
+  authId,
+  isSignnedInAtom,
+  userAtom,
+} from "@/store/auth.store";
 import { axiosIntercept } from "@/utils/axios.interceptor";
-import { useCallback, useState } from "react";
+import { useSetAtom } from "jotai";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 type Response = {
-  message : string,
-  user? : {
-    id : string,
-    name : string,
-    email : string
-  },
-  success : boolean,
-  error? : string
-}
+  message: string;
+  payload: {
+    id: string;
+    name: string;
+    email: string;
+  };
+  success: boolean;
+  error?: string;
+};
 
 export const useAuth = () => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [data, setData] = useState<Response | null>(null);
-  const [lastFetchTime, setLastFetchTime] = useState(0);
+  const setAuthId = useSetAtom(authId);
+  const setMeta = useSetAtom(userAtom);
+  const setIsSignedIn = useSetAtom(isSignnedInAtom);
 
-  // Fetch auth data with debounce to prevent frequent calls
-  const fetchAuth = useCallback(async (force = false) => {
-    // Implement a simple cache mechanism
-    // Only fetch if more than 1 hour has passed or force is true
-    const now = Date.now();
-    const shouldFetch = force || !lastFetchTime || (now - lastFetchTime > 60 * 60 * 1000);
-    
-    if (!shouldFetch) return;
-    
-    setIsLoading(true);
+  const [state, setState] = useState({
+    isLoading: false,
+    error: null as string | null,
+    success: undefined as boolean | undefined,
+  });
+
+  const fetchAuth = useCallback(async () => {
+    setState((prev) => ({ ...prev, isLoading: true }));
+    console.log("Inside fetchAuth");
     try {
-      const response = await axiosIntercept.get("/me");
-      console.log("Auth API called at:", new Date().toISOString());
-      setData(response.data);
-      setLastFetchTime(now);
-      setError(null);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : String(err));
-      console.error("Auth fetch failed:", err);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [lastFetchTime]);
+      const response = await axiosIntercept.get<Response>("/me");
 
-  return { 
-    isLoading, 
-    error, 
-    meta: data?.user, 
-    status: data?.success,
-    refetch: fetchAuth 
-  };
+      console.log(response.data);
+      const user = response.data.payload;
+      const success = response.data.success;
+
+      setAuthId(user.id);
+      console.log("Id is set", user.id);
+      setMeta(user);
+      setIsSignedIn(success);
+
+      setState({ isLoading: false, error: null, success: true });
+    } catch (err) {
+      console.log("UseAUth error ", err);
+      setState({
+        isLoading: false,
+        error: err instanceof Error ? err.message : String(err),
+        success: false,
+      });
+    }
+  }, [setAuthId, setMeta]);
+
+  useEffect(() => {
+    fetchAuth();
+  }, [fetchAuth]);
+
+  return useMemo(
+    () => ({
+      ...state,
+      refetch: fetchAuth,
+    }),
+    [state, fetchAuth]
+  );
 };

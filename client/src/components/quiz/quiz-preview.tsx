@@ -3,7 +3,7 @@ import { Badge } from "@/components/ui/badge"
 import { Clock, HelpCircle, Award, BarChart3 } from "lucide-react"
 
 interface QuizConfig {
-  id: string
+  id?: string
   title: string
   numQuestions: string
   description: string
@@ -18,7 +18,6 @@ interface QuizPreviewProps {
 }
 
 export default function QuizPreview({ config }: QuizPreviewProps) {
-  // Helper function to get difficulty color
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty.toLowerCase()) {
       case "easy":
@@ -34,7 +33,6 @@ export default function QuizPreview({ config }: QuizPreviewProps) {
     }
   }
 
-  // Sample questions based on the config
   const sampleQuestions = [
     {
       id: 1,

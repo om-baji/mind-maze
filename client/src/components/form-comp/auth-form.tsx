@@ -5,7 +5,7 @@ import { Separator } from "@/components/ui/separator"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useLogin } from "@/hooks/useLogin"
 import { useRegister } from "@/hooks/useRegister"
-import { userAtom } from "@/store/metadata.atom"
+import { userAtom } from "@/store/auth.store"
 import { useSetAtom } from "jotai"
 import { ArrowRight, Eye, EyeOff, Lock, Mail, User } from "lucide-react"
 import { useEffect, useState } from "react"
@@ -28,8 +28,8 @@ export default function AuthForm() {
     setShowPassword(!showPassword)
   }
 
-  const { login, data, error: loginError, isLogging, isSuccess : isLoginSuccess } = useLogin();
-  const { register, data: registerData, error: registerError, isSigning , isSuccess : isRegisterSuccess} = useRegister();
+  const { login, data, error: loginError, isLogging, isSuccess: isLoginSuccess } = useLogin();
+  const { register, data: registerData, error: registerError, isSigning, isSuccess: isRegisterSuccess } = useRegister();
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -53,7 +53,7 @@ export default function AuthForm() {
   }
 
   useEffect(() => {
-    console.log("Login suc : ",isLoginSuccess)
+    console.log("Login suc : ", isLoginSuccess)
     console.log(data)
     if (isLoginSuccess && data) {
       setMeta(data);
@@ -162,9 +162,9 @@ export default function AuthForm() {
         </TabsContent>
 
         <TabsContent value="signup" className="space-y-4 pt-4">
-          <form 
-          onSubmit={handleAuth}
-          className="space-y-4">
+          <form
+            onSubmit={handleAuth}
+            className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="first-name">First name</Label>
@@ -187,9 +187,9 @@ export default function AuthForm() {
               <Label htmlFor="email-signup">Email</Label>
               <div className="relative">
                 <Mail className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
-                <Input 
-                onChange={e => setEmail(e.target.value)}
-                id="email-signup" type="email" placeholder="m@example.com" className="pl-10" required />
+                <Input
+                  onChange={e => setEmail(e.target.value)}
+                  id="email-signup" type="email" placeholder="m@example.com" className="pl-10" required />
               </div>
             </div>
 

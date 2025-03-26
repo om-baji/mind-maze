@@ -1,20 +1,20 @@
-import { useEffect, useState } from "react"
-import { useAtom } from "jotai"
-import { userAtom } from "@/store/metadata.atom"
-import { useConfig } from "@/hooks/useConfig"
 import Navbar from "@/components/Navbar"
 import { QuizConfigForm } from "@/components/quiz/quiz-config-form"
-import { Button } from "@/components/ui/button"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { Loader2, AlertCircle, Settings, BookOpen, Clock, BarChart, ArrowLeft, Save } from "lucide-react"
-import { Badge } from "@/components/ui/badge"
-import { Skeleton } from "@/components/ui/skeleton"
 import QuizPreview from "@/components/quiz/quiz-preview"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Skeleton } from "@/components/ui/skeleton"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { useConfig } from "@/hooks/useConfig"
+import { authId } from "@/store/auth.store"
+import { useAtomValue } from "jotai"
+import { AlertCircle, ArrowLeft, BarChart, BookOpen, Clock, Loader2, Save, Settings } from "lucide-react"
+import { useEffect, useState } from "react"
 
 interface QuizConfig {
-  id: string
+  id?: string
   title: string
   numQuestions: string
   description: string
@@ -25,15 +25,13 @@ interface QuizConfig {
 }
 
 export default function QuizConfigPage() {
-  const [meta] = useAtom(userAtom)
+  const authIdValue = useAtomValue(authId)
+
   const [activeTab, setActiveTab] = useState("configure")
   const [savedConfigs, setSavedConfigs] = useState<QuizConfig[]>([])
   const [selectedConfig, setSelectedConfig] = useState<QuizConfig | null>(null)
 
-  // Get config data from the hook
-  const { config, isPending, error } = useConfig(meta?.id || "")
-
-  console.log(meta)
+  const { config, isPending, error } = useConfig(authIdValue || "")
 
   useEffect(() => {
     if (config && !isPending) {
@@ -47,7 +45,7 @@ export default function QuizConfigPage() {
     }
   }, [config, isPending])
 
-  if (!meta) {
+  if (!authIdValue) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 dark:bg-zinc-900">
         <Loader2 className="h-8 w-8 animate-spin text-primary mb-4" />
@@ -131,9 +129,7 @@ export default function QuizConfigPage() {
                         variant="outline"
                         className="w-full mt-4"
                         onClick={() => {
-                          // Create a new empty config
                           const newConfig = {
-                            id: `new-${Date.now()}`,
                             title: "New Quiz",
                             numQuestions: "10",
                             description: "",
@@ -164,7 +160,6 @@ export default function QuizConfigPage() {
                         <QuizConfigForm
                           initialData={selectedConfig}
                           onSave={(updatedConfig) => {
-                            // Update the saved configs with the new data
                             const updatedConfigs = savedConfigs.map((cfg) =>
                               cfg.id === updatedConfig.id ? updatedConfig : cfg,
                             )
@@ -278,7 +273,6 @@ export default function QuizConfigPage() {
   )
 }
 
-// Loading skeleton component
 function ConfigSkeleton() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
