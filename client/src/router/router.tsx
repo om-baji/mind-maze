@@ -20,7 +20,7 @@ export const router = createBrowserRouter([
       element: <Home />
     },
     {
-      path : "/quiz",
+      path : "/quiz/solve/:configId",
       element : <QuizPage />
     },
     {

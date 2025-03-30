@@ -5,12 +5,13 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Skeleton } from "@/components/ui/skeleton"
+import ConfigSkeleton from "@/components/quiz/config-skeleton"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useAuth } from "@/context/AuthContext"
 import { useConfig } from "@/hooks/useConfig"
-import { AlertCircle, ArrowLeft, BarChart, BookOpen, Clock, Loader2, Save, Settings } from "lucide-react"
+import { AlertCircle, ArrowLeft, BarChart, BookOpen, Clock, Loader2, Play, Save, Settings } from "lucide-react"
 import { useEffect, useState } from "react"
+import { useNavigate } from "react-router-dom"
 
 interface QuizConfig {
   id?: string
@@ -25,6 +26,7 @@ interface QuizConfig {
 
 export default function QuizConfigPage() {
   const { authId: authIdValue } = useAuth()
+  const navigate = useNavigate()
 
   const [activeTab, setActiveTab] = useState("configure")
   const [savedConfigs, setSavedConfigs] = useState<QuizConfig[]>([])
@@ -34,7 +36,6 @@ export default function QuizConfigPage() {
 
   useEffect(() => {
     if (config && !isPending) {
-
       const configsArray = Array.isArray(config) ? config : [config]
       setSavedConfigs(configsArray)
 
@@ -43,6 +44,14 @@ export default function QuizConfigPage() {
       }
     }
   }, [config, isPending])
+
+  const handleSolveQuiz = (configId: string | undefined) => {
+    if (configId) {
+      navigate(`/quiz/solve/${configId}`)
+    } else {
+      console.error("Cannot solve quiz: config ID is missing")
+    }
+  }
 
   if (!authIdValue) {
     return (
@@ -106,23 +115,32 @@ export default function QuizConfigPage() {
                   <Card>
                     <CardHeader>
                       <CardTitle>Saved Configurations</CardTitle>
-                      <CardDescription>Select a configuration to edit or create a new one</CardDescription>
+                      <CardDescription>Select a configuration to edit or take a quiz</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-2">
                       {savedConfigs.map((cfg) => (
-                        <Button
-                          key={cfg.id}
-                          variant={selectedConfig?.id === cfg.id ? "default" : "outline"}
-                          className="w-full justify-start text-left mb-2"
-                          onClick={() => setSelectedConfig(cfg)}
-                        >
-                          <div className="truncate">
-                            {cfg.title || "Untitled Quiz"}
-                            <Badge variant="outline" className="ml-2">
-                              {cfg.difficulty}
-                            </Badge>
-                          </div>
-                        </Button>
+                        <div key={cfg.id} className="flex items-center mb-2 gap-2">
+                          <Button
+                            variant={selectedConfig?.id === cfg.id ? "default" : "outline"}
+                            className="flex-1 justify-start text-left"
+                            onClick={() => setSelectedConfig(cfg)}
+                          >
+                            <div className="truncate">
+                              {cfg.title || "Untitled Quiz"}
+                              <Badge variant="outline" className="ml-2">
+                                {cfg.difficulty}
+                              </Badge>
+                            </div>
+                          </Button>
+                          <Button 
+                            size="icon" 
+                            variant="secondary" 
+                            onClick={() => handleSolveQuiz(cfg.id)}
+                            title="Solve this quiz"
+                          >
+                            <Play className="h-4 w-4" />
+                          </Button>
+                        </div>
                       ))}
                       <Button
                         variant="outline"
@@ -151,9 +169,20 @@ export default function QuizConfigPage() {
                 <div className="md:col-span-2">
                   {selectedConfig ? (
                     <Card>
-                      <CardHeader>
-                        <CardTitle>Edit Configuration</CardTitle>
-                        <CardDescription>Customize your quiz settings</CardDescription>
+                      <CardHeader className="flex flex-row items-center justify-between">
+                        <div>
+                          <CardTitle>Edit Configuration</CardTitle>
+                          <CardDescription>Customize your quiz settings</CardDescription>
+                        </div>
+                        {selectedConfig.id && (
+                          <Button 
+                            variant="default"
+                            onClick={() => handleSolveQuiz(selectedConfig.id)}
+                          >
+                            <Play className="mr-2 h-4 w-4" />
+                            Solve Quiz
+                          </Button>
+                        )}
                       </CardHeader>
                       <CardContent>
                         <QuizConfigForm
@@ -251,7 +280,20 @@ export default function QuizConfigPage() {
 
           <TabsContent value="preview">
             {selectedConfig ? (
-              <QuizPreview config={selectedConfig} />
+              <div className="space-y-4">
+                <div className="flex justify-end">
+                  {selectedConfig.id && (
+                    <Button 
+                      variant="default"
+                      onClick={() => handleSolveQuiz(selectedConfig.id)}
+                    >
+                      <Play className="mr-2 h-4 w-4" />
+                      Solve This Quiz
+                    </Button>
+                  )}
+                </div>
+                <QuizPreview config={selectedConfig} />
+              </div>
             ) : (
               <Card>
                 <CardContent className="flex flex-col items-center justify-center py-12">
@@ -269,44 +311,6 @@ export default function QuizConfigPage() {
         </Tabs>
       </div>
     </Navbar>
-  )
-}
-
-function ConfigSkeleton() {
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <div className="md:col-span-1">
-        <Card>
-          <CardHeader>
-            <Skeleton className="h-6 w-3/4 mb-2" />
-            <Skeleton className="h-4 w-full" />
-          </CardHeader>
-          <CardContent className="space-y-2">
-            {[1, 2, 3].map((i) => (
-              <Skeleton key={i} className="h-10 w-full mb-2" />
-            ))}
-          </CardContent>
-        </Card>
-      </div>
-      <div className="md:col-span-2">
-        <Card>
-          <CardHeader>
-            <Skeleton className="h-6 w-1/2 mb-2" />
-            <Skeleton className="h-4 w-3/4" />
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {[1, 2, 3, 4].map((i) => (
-                <div key={i} className="space-y-2">
-                  <Skeleton className="h-4 w-1/4" />
-                  <Skeleton className="h-10 w-full" />
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    </div>
   )
 }
 
