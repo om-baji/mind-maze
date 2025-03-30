@@ -1,18 +1,20 @@
-import AuthForm from '@/components/form-comp/auth-form'
-// import { useAuthCtx } from '@/context/AuthContext';
-import React from 'react'
+import AuthForm from '@/components/form-comp/auth-form';
+import { useAuth } from '@/context/AuthContext';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
 const Auth: React.FC = () => {
 
-  // const { isAuth } = useAuthCtx()
+  const { isSignedIn } = useAuth()
   const navigate = useNavigate();
 
-  // if (isAuth) {
-  //   navigate("/home");
-  //   toast("Already signed in!")
-  // }
+  useEffect(() => {
+    if (isSignedIn) {
+      navigate("/home");
+      toast("Already signed in!")
+    }
+  }, [isSignedIn, navigate])
 
   return (
     <div className='flex justify-center items-center h-screen'>

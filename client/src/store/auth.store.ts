@@ -1,9 +1,24 @@
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
 import { metadata } from "@/utils/types";
-import { atomWithStorage } from "jotai/utils";
 
-export const isSignnedInAtom = atomWithStorage<boolean | null>(
-  "isSignedIn",
-  null
+interface AuthState {
+  isSignedIn: boolean | null;
+  authId: string | null;
+  user: metadata | null;
+  setAuthState: (state: Partial<AuthState>) => void;
+} 
+
+export const useAuthStore = create<AuthState>()(
+  persist(
+    (set) => ({
+      isSignedIn: null,
+      authId: null,
+      user: null,
+      setAuthState: (state) => set(state),
+    }),
+    {
+      name: "auth-storage",
+    }
+  )
 );
-export const authId = atomWithStorage<string | null>("authId", null);
-export const userAtom = atomWithStorage<metadata | null>("userAtom", null);

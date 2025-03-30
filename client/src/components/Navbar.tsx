@@ -1,17 +1,16 @@
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import { Bell, Layers, Search, Menu, X, User, LogOut } from "lucide-react";
-import { useEffect, useState } from "react";
-import { Input } from "./ui/input";
-import { useIsMobile } from "@/hooks/use-mobile";
-import { useAtom } from "jotai";
-import { userAtom } from "@/store/auth.store";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useAuth } from "@/context/AuthContext";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { cn } from "@/lib/utils";
+import { Bell, Layers, LogOut, Menu, Search, User, X } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Input } from "./ui/input";
 
 const Navbar = ({ children }: {
   children: React.ReactNode
@@ -20,7 +19,7 @@ const Navbar = ({ children }: {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const isMobile = useIsMobile();
 
-  const [user] = useAtom(userAtom);
+  const { user } = useAuth()
 
   useEffect(() => {
     const handleScroll = () => {
@@ -62,7 +61,7 @@ const Navbar = ({ children }: {
             <a href="/config" className="text-sm font-medium hover:text-foreground transition-colors">
               Saved Configs
             </a>
-            
+
             <a href="/reports" className="text-sm font-medium hover:text-foreground transition-colors">
               Reports
             </a>

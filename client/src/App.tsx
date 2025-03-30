@@ -6,36 +6,22 @@ import TestimonialCard from "@/components/landing/tesitimonial"
 import { Button } from "@/components/ui/button"
 import { ArrowRight, BarChart3, Brain, ChevronRight, NotebookTabs } from "lucide-react"
 import { useNavigate } from "react-router-dom"
-import { useAuth } from "./hooks/useAuth"
 import { useEffect } from "react"
+import { useAuth } from "./context/AuthContext"
 
 export default function App() {
 
   const navigate = useNavigate();
-  const { isLoading, error, success } = useAuth();
+  const { isSignedIn } = useAuth();
 
   useEffect(() => {
-    if (!isLoading && success === false && success != undefined) {
+    console.log("It ran out", isSignedIn)
 
+    if (!isSignedIn) {
+      console.log("It ran")
       navigate("/auth");
     }
-  }, [isLoading, success, navigate]);
-
-  if (isLoading || success === undefined) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="flex flex-col items-center gap-2">
-          <div className="h-8 w-8 border-4 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
-          <p className="text-gray-600 text-lg font-medium">Checking authentication...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) return <div>
-    {error}
-    {'Its an errror'}
-  </div>;
+  }, [isSignedIn, navigate]);
 
 
   return (

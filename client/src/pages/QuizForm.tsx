@@ -7,9 +7,8 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { useAuth } from "@/context/AuthContext"
 import { useConfig } from "@/hooks/useConfig"
-import { authId } from "@/store/auth.store"
-import { useAtomValue } from "jotai"
 import { AlertCircle, ArrowLeft, BarChart, BookOpen, Clock, Loader2, Save, Settings } from "lucide-react"
 import { useEffect, useState } from "react"
 
@@ -25,7 +24,7 @@ interface QuizConfig {
 }
 
 export default function QuizConfigPage() {
-  const authIdValue = useAtomValue(authId)
+  const { authId: authIdValue } = useAuth()
 
   const [activeTab, setActiveTab] = useState("configure")
   const [savedConfigs, setSavedConfigs] = useState<QuizConfig[]>([])

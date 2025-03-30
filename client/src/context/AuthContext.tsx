@@ -1,40 +1,73 @@
-// import { useAuth } from "@/hooks/useAuth";
-// import { isAuthAtom } from "@/store/authAtom";
-// import { userAtom } from "@/store/metadata.atom";
-// import { useAtomValue, useSetAtom } from "jotai";
-// import { useEffect, useRef } from "react";
+import React, { createContext, useContext, ReactNode, useEffect } from 'react';
+import { useAuthStore } from '@/store/auth.store'; // Adjust the import path as needed
+import { metadata } from "@/utils/types";
+import { axiosIntercept } from '@/utils/axios.interceptor';
 
-// export function AuthProvider({ children }: { children: React.ReactNode }) {
-//     const setMeta = useSetAtom(userAtom);
-//     const setIsAuth = useSetAtom(isAuthAtom);
-//     const initialized = useRef(false);
+interface AuthContextType {
+    isSignedIn: boolean | null;
+    authId: string | null;
+    user: metadata | null;
+    setAuthState: (state: Partial<{
+        isSignedIn: boolean | null;
+        authId: string | null;
+        user: metadata | null;
+    }>) => void;
+}
 
-//     const { isLoading, error, status refetch } = useAuth();
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-//     useEffect(() => {
-//         if (!initialized.current) {
-//             refetch();
-//             initialized.current = true;
-//         }
-//     }, [refetch]);
+interface AuthProviderProps {
+    children: ReactNode;
+}
 
-//     useEffect(() => {
-//         if (!isLoading && !error && meta && status) {
-//             console.log(meta)
-//             setIsAuth(status);
-//             setMeta(meta);
-//         }
-//     }, [isLoading, error, status, meta, setIsAuth, setMeta]);
+export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
-//     return <>{children}</>;
-// }
+    const { isSignedIn, authId, user, setAuthState } = useAuthStore();
 
-// export const useAuthCtx = () => {
-//     const isAuth = useAtomValue(isAuthAtom);
-//     const meta = useAtomValue(userAtom);
+    useEffect(() => {
+        const checkAuthStatus = async () => {
+            try {
 
-//     return {
-//         isAuth: isAuth ?? false,
-//         userId: meta ?? null,
-//     };
-// };
+                const response = await axiosIntercept.get("/me")
+                const user = response.data.payload;
+                const success = response.data.success;
+
+                setAuthState({
+                    isSignedIn: success,
+                    user,
+                    authId: user.id
+                })
+
+            } catch (error) {
+                console.error('Error checking auth status:', error);
+            }
+        };
+
+        if (isSignedIn === null) {
+            checkAuthStatus();
+        }
+    }, [isSignedIn, setAuthState]);
+
+    const contextValue: AuthContextType = {
+        isSignedIn,
+        authId,
+        user,
+        setAuthState
+    };
+
+    return (
+        <AuthContext.Provider value={contextValue}>
+            {children}
+        </AuthContext.Provider>
+    );
+};
+
+export const useAuth = (): AuthContextType => {
+    const context = useContext(AuthContext);
+
+    if (context === undefined) {
+        throw new Error('useAuth must be used within an AuthProvider');
+    }
+
+    return context;
+};

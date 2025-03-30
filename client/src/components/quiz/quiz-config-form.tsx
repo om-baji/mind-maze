@@ -15,10 +15,9 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Slider } from "@/components/ui/slider"
 import { Textarea } from "@/components/ui/textarea"
-import { authId, userAtom } from "@/store/auth.store"
+import { useAuth } from "@/context/AuthContext"
 import { axiosInstance } from "@/utils/axiosInstance"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useAtom } from "jotai"
 import { Save, Trash } from "lucide-react"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
@@ -40,11 +39,11 @@ interface QuizConfigFormProps {
   onDelete?: () => void;
 }
 
-export function QuizConfigForm({ initialData, onSave, onDelete } : QuizConfigFormProps) {
+export function QuizConfigForm({ initialData, onSave, onDelete }: QuizConfigFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
 
-  const [userId] = useAtom(authId)
+  const { authId: userId } = useAuth()
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -60,7 +59,7 @@ export function QuizConfigForm({ initialData, onSave, onDelete } : QuizConfigFor
     },
   })
 
-  async function onSubmit(values : z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSubmitting(true)
     try {
       await axiosInstance.post(`/quiz?id=${userId}`, values)

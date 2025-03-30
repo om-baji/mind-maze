@@ -1,13 +1,12 @@
 import QuizComp from '@/components/quiz/quiz-comp';
 import { useQuiz } from '@/hooks/useQuiz';
-import { configAtom } from '@/store/quizconfig.atom';
+import { quizStore } from '@/store/quizconfig.atom';
 import { questionType } from '@/utils/types';
-import { useAtomValue } from 'jotai';
 import { Loader2 } from 'lucide-react';
 
 const QuizPage = () => {
 
-  const quizConfig = useAtomValue(configAtom)
+  const quizConfig = quizStore()
 
   if(!quizConfig) return null;
 

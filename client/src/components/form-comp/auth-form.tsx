@@ -5,8 +5,6 @@ import { Separator } from "@/components/ui/separator"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useLogin } from "@/hooks/useLogin"
 import { useRegister } from "@/hooks/useRegister"
-import { userAtom } from "@/store/auth.store"
-import { useSetAtom } from "jotai"
 import { ArrowRight, Eye, EyeOff, Lock, Mail, User } from "lucide-react"
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
@@ -20,7 +18,6 @@ export default function AuthForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorState, setErrorState] = useState<string | null>(null)
-  const setMeta = useSetAtom(userAtom)
 
   const navigate = useNavigate()
 
@@ -36,14 +33,23 @@ export default function AuthForm() {
     try {
       if (activeTab === "login") login({ email, password });
       else register({ name: `${firstName} ${lastName}`, email, password });
-
     } catch (error) {
       console.error(loginError)
       setErrorState(error instanceof Error ? error.message : String(error) ?? null)
       setErrorState(registerError instanceof Error ? registerError.message : String(error) ?? null)
-
     }
   };
+
+  const handleOauth = () => {
+    const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+    const redirectUri = encodeURIComponent(import.meta.env.VITE_GOOGLE_REDIRECT_URI);
+    const scope = encodeURIComponent('openid email profile');
+    const responseType = 'code';
+
+    const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=${responseType}&scope=${scope}`;
+
+    window.location.href = googleAuthUrl;
+  }
 
   const clear = () => {
     setEmail("");
@@ -53,21 +59,16 @@ export default function AuthForm() {
   }
 
   useEffect(() => {
-    console.log("Login suc : ", isLoginSuccess)
-    console.log(data)
     if (isLoginSuccess && data) {
-      setMeta(data);
       navigate("/home");
     }
-  }, [isLoginSuccess, data, setMeta, navigate]);
+  }, [isLoginSuccess, data, navigate]);
 
   useEffect(() => {
-
     if (isRegisterSuccess && registerData) {
-      setMeta(registerData);
       navigate("/home");
     }
-  }, [isRegisterSuccess, registerData, setMeta, navigate]);
+  }, [isRegisterSuccess, registerData, navigate]);
 
   return (
     <div className="mx-auto w-full max-w-md space-y-6 rounded-lg border bg-card p-10 shadow-sm">
@@ -123,7 +124,7 @@ export default function AuthForm() {
             <Button
               disabled={isLogging}
               type="submit" className="w-full">
-              {isLogging ? "Looding..." : "Login"}
+              {isLogging ? "Loading..." : "Login"}
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </form>
@@ -137,7 +138,12 @@ export default function AuthForm() {
             </div>
           </div>
 
-          <Button variant="outline" className="w-full" type="button">
+          <Button
+            variant="outline"
+            className="w-full"
+            type="button"
+            onClick={handleOauth}
+          >
             <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">
               <path
                 d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -220,7 +226,7 @@ export default function AuthForm() {
             <Button
               disabled={isSigning}
               type="submit" className="w-full">
-              {isSigning ? "Looding..." : "Create Account"}
+              {isSigning ? "Loading..." : "Create Account"}
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </form>
@@ -234,7 +240,12 @@ export default function AuthForm() {
             </div>
           </div>
 
-          <Button variant="outline" className="w-full" type="button">
+          <Button
+            variant="outline"
+            className="w-full"
+            type="button"
+            onClick={handleOauth}
+          >
             <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">
               <path
                 d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -259,7 +270,6 @@ export default function AuthForm() {
         </TabsContent>
       </Tabs>
 
-
       {errorState && (
         <div className="text-center text-sm text-muted-foreground">
           {errorState}
@@ -280,4 +290,3 @@ export default function AuthForm() {
     </div>
   )
 }
-

@@ -4,18 +4,15 @@ import { RouterProvider } from 'react-router-dom'
 import { Toaster } from 'sonner'
 import './index.css'
 import { router } from './router/router.tsx'
-import { Provider } from "jotai"
+import { AuthProvider } from "./context/AuthContext.tsx"
 
 const client = new QueryClient()
 
 createRoot(document.getElementById('root')!).render(
     <QueryClientProvider client={client}>
-        <Provider>
-
+        <AuthProvider>
             <Toaster />
             <RouterProvider router={router} />
-
-        </Provider>
-
+        </AuthProvider>
     </QueryClientProvider>
 )
