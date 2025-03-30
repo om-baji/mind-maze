@@ -22,6 +22,7 @@ model User {
   password     String?
   accessToken  String?
   refreshToken String?
+  attemptId    String?
 
   quizes      Quiz[]
   userAttempt Attempts[]
