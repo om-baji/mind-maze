@@ -24,8 +24,7 @@ model User {
   refreshToken String?
   attemptId    String?
 
-  quizes      Quiz[]
-  userAttempt Attempts[]
+  quizes   Quiz[]
 }
 
 model Quiz {
@@ -44,10 +43,8 @@ model Quiz {
 
 model Attempts {
   id        String @id @default(cuid())
-  attemptId String
+  attemptId String @unique
   map       Json
-
-  user User @relation(references: [id], fields: [attemptId])
 }
 
 model Blacklist {
