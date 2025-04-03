@@ -22,9 +22,9 @@ model User {
   password     String?
   accessToken  String?
   refreshToken String?
-  attemptId    String?
 
   quizes   Quiz[]
+  Attempts Attempts[]
 }
 
 model Quiz {
@@ -45,6 +45,9 @@ model Attempts {
   id        String @id @default(cuid())
   attemptId String @unique
   map       Json
+
+  user   User   @relation(fields: [userId], references: [id]) // 🔥 FK to User
+  userId String 
 }
 
 model Blacklist {

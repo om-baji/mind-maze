@@ -12,7 +12,7 @@ export class GeminiCont {
       const model = await useGemini(c.env.GEMINI_API_KEY);
       const redisClient = RedisSingleton.getInstance(c);
       let attemptId;
-      const { section, limit, level,attemptId : attempt } = await c.req.json();
+      const { section, limit, level,attemptId : attempt,userId } = await c.req.json();
       const questionLimit = Number(limit) || 1;
       
       attemptId = attemptId ? attempt : createId();
@@ -34,7 +34,8 @@ export class GeminiCont {
       await prisma.attempts.create({
         data  : {
           attemptId,
-          map
+          map,
+          userId
         }
       })
 
