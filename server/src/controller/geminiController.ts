@@ -24,10 +24,17 @@ export class GeminiCont {
         return c.json({ message: "Success", data: cache });
       }
 
-      const prompt = `Generate ${questionLimit} high-quality ${level} level questions for the ${section} subject. Ensure they are conceptually deep, thought-provoking, and require critical thinking to solve.`;
-
+      const prompt = `Generate ${questionLimit} high-quality, ${level}-level multiple-choice questions for the subject ${section}.  
+      - Ensure they are conceptually deep, thought-provoking, and require critical thinking.  
+      - Each question should test fundamental understanding and application of concepts.  
+      - Avoid overly simplistic or fact-based recall questions; focus on problem-solving and reasoning.  
+      - Provide four answer options, ensuring that distractors are plausible and not obviously incorrect.  
+      - Keep all options similar in length and complexity. ` 
+      
       const response = await model.generateContent(prompt);
       const questions = response.response.text();
+
+      const withAns = JSON.parse(questions);
 
       const map = JSON.parse(getAnswerMap(JSON.parse(questions)))
 
@@ -39,6 +46,11 @@ export class GeminiCont {
         }
       })
 
+      const sanitizedQuestions = withAns.map((q: Question) => {
+        const { correct_answer, ...rest } = q;
+        return rest;
+      });
+      
       const answerKey = `answers:${attemptId}`
 
       await redisClient.set(answerKey,map);
@@ -46,8 +58,8 @@ export class GeminiCont {
 
       await redisClient.set(cacheKey, JSON.stringify(questions));
       await redisClient.expire(cacheKey, RedisSingleton.getTtl());
-
-      return c.json({ message: "Success", data: questions });
+      
+      return c.json({ message: "Success", data: sanitizedQuestions });
     } catch (error) {
       return c.json({
         message: "Failed",
@@ -57,10 +69,41 @@ export class GeminiCont {
   }
 }
 
-const getAnswerMap = (questions : Question[]) => {
-  const mpp = new Map<number, string>();
+const getAnswerMap = (questions: Question[]) => {
+  if (!Array.isArray(questions)) {
+    console.error("getAnswerMap received a non-array value:", questions);
+    return JSON.stringify([]);
+  }
 
-  questions.map((question : Question, index) => mpp.set(index, question.correct_option));
+  const answerArray: string[] = new Array(questions.length);
 
-  return JSON.stringify(Object.fromEntries(mpp));
-}
+  questions.forEach((question: Question, index) => {
+    if (!question.correct_answer || !Array.isArray(question.options)) {
+      console.warn(`Question at index ${index} is missing correct_answer or options:`, question);
+      return;
+    }
+
+    const normalizedCorrectAnswer = question.correct_answer.replace(/\s+/g, " ").trim();
+
+    const normalizedOptions = question.options.map((option) =>
+      option.replace(/\s+/g, " ").trim()
+    );
+
+    const correctIndex = normalizedOptions.findIndex(
+      (option) => option.toLowerCase() === normalizedCorrectAnswer.toLowerCase()
+    );
+
+    if (correctIndex === -1) {
+      console.warn(
+        `Question at index ${index} has a correct_answer that doesn't match any option:`,
+        question.correct_answer,
+        question.options
+      );
+    } else {
+      answerArray[index] = normalizedOptions[correctIndex]; 
+    }
+  });
+
+  return JSON.stringify(answerArray);
+};
+

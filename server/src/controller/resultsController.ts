@@ -40,7 +40,47 @@ export class ResultsController {
                 message: "Failed",
                 error: error instanceof Error ? error.message : String(error),
                 success : false
-              });
+            });
         }
     }
+
+    static async evaluate(c: Context) {
+        try {
+            const prisma = getPrismaClient(c.env.DATABASE_URL);
+            const attemptId = c.req.query("aid");
+            const { userMap } = await c.req.json(); 
+    
+            const attempt = await prisma.attempts.findUnique({
+                where: { attemptId }
+            });
+    
+            if (!attempt || !attempt.map) {
+                return c.json({ message: "Attempt not found", success: false });
+            }
+    
+            const answerKey = JSON.parse(attempt.map as string); 
+    
+            let correctCount = 0;
+            const results = userMap.map((answer: string, index: number) => {
+                const isCorrect = answerKey[index] === answer;
+                if (isCorrect) correctCount++;
+                return { questionIndex: index, isCorrect };
+            });
+    
+            return c.json({
+                message: "Success",
+                score: correctCount,
+                totalQuestions: userMap.length,
+                results,
+                success: true
+            });
+        } catch (error) {
+            return c.json({
+                message: "Failed",
+                error: error instanceof Error ? error.message : String(error),
+                success: false
+            });
+        }
+    }
+    
 }

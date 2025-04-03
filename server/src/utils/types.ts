@@ -8,7 +8,7 @@ export type correctQuiz = {
 export type Question = {
     question : string,
     options : string[],
-    correct_option : string
+    correct_answer : string
 }
 
 export type MapData = {
