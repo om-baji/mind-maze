@@ -32,3 +32,8 @@ export type MapData = {
     email: string;
     exp: number;
   };
+
+  export type statsData = {
+    quizes : number,
+    attempted : number
+  }

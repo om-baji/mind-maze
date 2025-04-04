@@ -11,4 +11,5 @@ export const userRouter = new Hono()
   .post("/logout", rateLimiter, authMiddleware, UserController.logout)
   .delete("/deleteUser", rateLimiter, UserController.deleteUser)
   .get("/refresh", rateLimiter, UserController.refresh)
-  .get("/me", rateLimiter, authMiddleware, UserController.me);
+  .get("/me", rateLimiter, authMiddleware, UserController.me)
+  .get("/stats", rateLimiter,authMiddleware,UserController.stats)

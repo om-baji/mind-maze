@@ -50,10 +50,11 @@ export class ResultsController {
             const attemptId = c.req.query("aid");
             const { userMap } = await c.req.json(); 
     
-            const attempt = await prisma.attempts.findUnique({
+            const attempt = await prisma.attempts.findFirst({
                 where: { attemptId }
             });
-    
+            console.log(attempt);
+            
             if (!attempt || !attempt.map) {
                 return c.json({ message: "Attempt not found", success: false });
             }

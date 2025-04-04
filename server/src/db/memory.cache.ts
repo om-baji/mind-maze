@@ -1,7 +1,8 @@
-import { MapData, UserMapData } from "../utils/types";
+import { MapData, statsData, UserMapData } from "../utils/types";
 
 export class MemoryCache {
   private static memory = new Map<string, MapData | UserMapData | number>();
+  private static statsMemory = new Map<string, MapData | UserMapData | number | statsData>();
 
   static setMemory(key: string, value: MapData | UserMapData) {
     this.memory.set(key, value);
@@ -15,6 +16,16 @@ export class MemoryCache {
     const data = this.memory.get(key);
     if(!data || typeof data != "number") return 0;
     return data;
+  }
+
+  static setStats(key : string, value : statsData) {
+    this.statsMemory.set(key,value)
+  }
+
+  static getStats(key : string) {
+    const stats = this.statsMemory.get(key);
+
+    return stats as statsData;
   }
 
   static getMemory(key: string) {
@@ -34,6 +45,7 @@ export class MemoryCache {
     }
     return item;
   }
+  
 
   static clear() {
     this.memory.clear();

@@ -11,11 +11,9 @@ export class GeminiCont {
       const prisma = await getPrismaClient(c.env.DATABASE_URL)
       const model = await useGemini(c.env.GEMINI_API_KEY);
       const redisClient = RedisSingleton.getInstance(c);
-      let attemptId;
-      const { section, limit, level,attemptId : attempt,userId } = await c.req.json();
+      const { section, limit, level,attemptId ,userId } = await c.req.json();
       const questionLimit = Number(limit) || 1;
       
-      attemptId = attemptId ? attempt : createId();
 
       const cacheKey = `questions:${attemptId}`;
       const cache = await redisClient.get(cacheKey);

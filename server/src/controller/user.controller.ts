@@ -6,7 +6,7 @@ import { RedisSingleton } from "../db/redis.cache";
 import { loginSchema, registerSchema } from "../models/user.model";
 import { hash, verifyPassword } from "../utils/password.hash";
 import { generateToken } from "../utils/generateToken";
-import { MapData, UserMapData } from "../utils/types";
+import { MapData, statsData, UserMapData } from "../utils/types";
 import { getCookie, setCookie } from "hono/cookie";
 import { verify } from "hono/jwt";
 import { JWTPayload } from "hono/utils/jwt/types";
@@ -807,6 +807,61 @@ export class UserController {
     } catch (error) {
       return c.json(
         {
+          error: error instanceof Error ? error.message : String(error),
+          message: "Something went wrong during token refresh!",
+          success: false,
+        },
+        500
+      );
+    }
+  }
+
+  static async stats(c : Context) {
+    try {
+      const prisma = getPrismaClient(c.env.DATABASE_URL)
+      const redisClient = RedisSingleton.getInstance(c)
+
+      const payload = await c.get("jwtPayload");
+
+      const cacheKey = `stats:${payload.id}`
+
+      const cached = MemoryCache.getStats(cacheKey) ?? await redisClient.get(cacheKey)
+
+      if(cached) {
+        return c.json({
+          success : true,
+          quizes : cached.quizes,
+          attempted : cached.attempted,
+        })
+      }
+
+      const user = await prisma.user.findUnique({
+        where : {
+          id : payload.id
+        },
+        include : {
+          quizes : true,
+          Attempts : true
+        }
+      })
+
+      if(!user) throw new Error("user not found!")
+      const cacheData = {
+        quizes : user?.quizes.length,
+        attempted : user?.Attempts.length
+      }
+
+      MemoryCache.setStats(cacheKey,cacheData as statsData)
+      await redisClient.set<statsData>(cacheKey,cacheData)
+
+      return c.json({
+        success : true,
+        quizes : user.quizes.length,
+        attempted : user.Attempts.length
+      })
+
+    } catch (error) {
+      return c.json({
           error: error instanceof Error ? error.message : String(error),
           message: "Something went wrong during token refresh!",
           success: false,
