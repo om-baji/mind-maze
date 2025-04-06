@@ -48,21 +48,22 @@ export class ResultsController {
         try {
             const prisma = getPrismaClient(c.env.DATABASE_URL);
             const attemptId = c.req.query("aid");
-            const { userMap } = await c.req.json(); 
-    
+            const payload = await c.req.json(); 
+ 
+            const userMap : string[] = Object.values(payload)
+
             const attempt = await prisma.attempts.findFirst({
                 where: { attemptId }
             });
-            console.log(attempt);
             
             if (!attempt || !attempt.map) {
                 return c.json({ message: "Attempt not found", success: false });
             }
     
-            const answerKey = JSON.parse(attempt.map as string); 
+            const answerKey = (attempt.map as string); 
     
             let correctCount = 0;
-            const results = userMap.map((answer: string, index: number) => {
+            const results = userMap.map((answer : string, index: number) => {
                 const isCorrect = answerKey[index] === answer;
                 if (isCorrect) correctCount++;
                 return { questionIndex: index, isCorrect };
