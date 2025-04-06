@@ -40,7 +40,7 @@ export class ResultsController {
                 message: "Failed",
                 error: error instanceof Error ? error.message : String(error),
                 success : false
-            });
+            }, 500);
         }
     }
 
@@ -81,7 +81,7 @@ export class ResultsController {
                 message: "Failed",
                 error: error instanceof Error ? error.message : String(error),
                 success: false
-            });
+            }, 500);
         }
     }
     

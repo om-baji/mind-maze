@@ -62,7 +62,7 @@ export class GeminiCont {
       return c.json({
         message: "Failed",
         error: error instanceof Error ? error.message : String(error),
-      });
+      }, 500);
     }
   }
 }
