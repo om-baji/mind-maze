@@ -56,14 +56,17 @@ const Navbar = ({ children }: {
 
           <div className="hidden md:flex items-center gap-6 text-muted-foreground">
             <a href="/" className="text-sm font-medium hover:text-foreground transition-colors">
+              Home
+            </a>
+            <a href="/home" className="text-sm font-medium hover:text-foreground transition-colors">
               Dashboard
             </a>
             <a href="/config" className="text-sm font-medium hover:text-foreground transition-colors">
               Saved Configs
             </a>
 
-            <a href="/reports" className="text-sm font-medium hover:text-foreground transition-colors">
-              Reports
+            <a href="/attempts" className="text-sm font-medium hover:text-foreground transition-colors">
+              Attempts
             </a>
 
             <a href="#" className="text-sm font-medium hover:text-foreground transition-colors">

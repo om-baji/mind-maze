@@ -8,6 +8,7 @@ export type quizType = {
     numQuestions: string,
     subject: string;
     questions : questionType[];
+    attemptId : string
 }
 
 export type questionType = {
@@ -20,4 +21,9 @@ export type metadata = {
     id : string,
     email : string,
     name? : string,
+}
+
+export type UserMap = {
+    index : number,
+    answer : string
 }

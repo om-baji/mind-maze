@@ -4,6 +4,7 @@ import { useQuiz } from '@/hooks/useQuiz';
 import { formValues } from '@/models/formSchema';
 import { axiosInstance } from '@/utils/axiosInstance';
 import { questionType } from '@/utils/types';
+import { createId } from '@paralleldrive/cuid2';
 import { Loader2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
@@ -13,10 +14,9 @@ const QuizPage = () => {
   const [quizConfig, setConfig] = useState<formValues | null>(null)
   const [configLoader, setLoader] = useState<boolean>(false)
   const [errorState, setError] = useState<string | null>(null)
+  const [attemptId] = useState<string>(createId())
 
   const { authId } = useAuth()
-
-  console.log(authId)
 
   const params = useParams()
 
@@ -41,7 +41,9 @@ const QuizPage = () => {
     getConfig();
   }, [configId])
 
-  const { isPending, questions, error } = useQuiz(quizConfig as formValues,authId as string);
+
+
+  const { isPending, questions, error } = useQuiz(quizConfig as formValues,authId as string, attemptId);
 
   if (configLoader) {
     return <div>
@@ -94,6 +96,7 @@ const QuizPage = () => {
           numQuestions={quizConfig?.numQuestions as string}
           subject={quizConfig?.subject as string}
           questions={(questions as questionType[])}
+          attemptId={attemptId as string}
         />
       ) : (
         <div className="bg-white p-8 rounded-lg shadow-2xl text-center">
