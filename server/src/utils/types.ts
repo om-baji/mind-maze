@@ -1,4 +1,4 @@
-import { SyncParseReturnType } from "zod"
+import { JsonValue } from "@prisma/client/runtime/library";
 
 export type correctQuiz = {
     attemptId : string,
@@ -36,4 +36,12 @@ export type MapData = {
   export type statsData = {
     quizes : number,
     attempted : number
+  }
+
+  export type AttemptData = {
+    userId : string,
+    attemptId : string,
+    map : JsonValue,
+    score? : number,
+    id : string
   }

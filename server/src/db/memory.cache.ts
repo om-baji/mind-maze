@@ -1,11 +1,20 @@
-import { MapData, statsData, UserMapData } from "../utils/types";
+import { AttemptData, MapData, statsData, UserMapData } from "../utils/types";
 
 export class MemoryCache {
   private static memory = new Map<string, MapData | UserMapData | number>();
-  private static statsMemory = new Map<string, MapData | UserMapData | number | statsData>();
+  private static statsMemory = new Map<string,statsData>();
+  private static attemtMemory = new Map<string,AttemptData>();
 
   static setMemory(key: string, value: MapData | UserMapData) {
     this.memory.set(key, value);
+  }
+
+  static setAttempt(key : string, value : AttemptData) {
+    this.attemtMemory.set(key,value)
+  }
+
+  static getAttempt(key : string) {
+    return this.attemtMemory.get(key)
   }
 
   static setIp(key : string,value : number) {

@@ -46,8 +46,16 @@ model Attempts {
   attemptId String @unique
   map       Json
 
-  user   User   @relation(fields: [userId], references: [id]) // 🔥 FK to User
-  userId String 
+  user    User      @relation(fields: [userId], references: [id]) // 🔥 FK to User
+  userId  String
+  Results Results[]
+}
+
+model Results {
+  id        String   @id @default(cuid())
+  result    Int
+  attemptId String
+  attemt    Attempts @relation(fields: [attemptId], references: [id])
 }
 
 model Blacklist {
