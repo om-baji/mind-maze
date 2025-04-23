@@ -7,7 +7,8 @@ interface AuthState {
   authId: string | null;
   user: metadata | null;
   setAuthState: (state: Partial<AuthState>) => void;
-} 
+  resetAuthState: () => void; 
+}
 
 export const useAuthStore = create<AuthState>()(
   persist(
@@ -16,6 +17,12 @@ export const useAuthStore = create<AuthState>()(
       authId: null,
       user: null,
       setAuthState: (state) => set(state),
+      resetAuthState: () =>
+        set({
+          isSignedIn: null,
+          authId: null,
+          user: null,
+        }),
     }),
     {
       name: "auth-storage",

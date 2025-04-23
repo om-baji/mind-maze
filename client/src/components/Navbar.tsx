@@ -11,6 +11,8 @@ import { cn } from "@/lib/utils";
 import { Bell, Layers, LogOut, Menu, Search, User, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Input } from "./ui/input";
+import { axiosInstance } from "@/utils/axiosInstance";
+import { useAuthStore } from "@/store/auth.store";
 
 const Navbar = ({ children }: {
   children: React.ReactNode
@@ -35,6 +37,19 @@ const Navbar = ({ children }: {
       setMobileMenuOpen(false);
     }
   }, [isMobile, mobileMenuOpen]);
+
+  const { resetAuthState } = useAuthStore()
+
+  const handleLogout = async () => {
+    try {
+      await axiosInstance.post("/logout")
+      resetAuthState();
+      localStorage.removeItem("auth-store")
+
+    } catch (error) {
+      console.log("Something went wrong! ", error)
+    }
+  }
 
   return (
     <div>
@@ -102,7 +117,7 @@ const Navbar = ({ children }: {
                 <DropdownMenuContent align="end" className="w-48">
                   <DropdownMenuItem className="flex items-center gap-2 cursor-pointer">
                     <LogOut className="size-4" />
-                    <span>Logout</span>
+                    <span onClick={handleLogout}>Logout</span>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>

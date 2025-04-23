@@ -68,6 +68,13 @@ export class ResultsController {
                 if (isCorrect) correctCount++;
                 return { questionIndex: index, isCorrect };
             });
+
+            await prisma.results.create({
+                data : {
+                    attemptId : attemptId as string,
+                    result : correctCount,
+                }
+            })
     
             return c.json({
                 message: "Success",

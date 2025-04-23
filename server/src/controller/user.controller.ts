@@ -7,7 +7,7 @@ import { loginSchema, registerSchema } from "../models/user.model";
 import { hash, verifyPassword } from "../utils/password.hash";
 import { generateToken } from "../utils/generateToken";
 import { MapData, statsData, UserMapData } from "../utils/types";
-import { getCookie, setCookie } from "hono/cookie";
+import { getCookie, setCookie,deleteCookie } from "hono/cookie";
 import { verify } from "hono/jwt";
 import { JWTPayload } from "hono/utils/jwt/types";
 
@@ -429,7 +429,7 @@ export class UserController {
           400
         );
       }
-
+      deleteCookie(c,"access")
       const prisma = await getPrismaClient(c.env.DATABASE_URL);
 
       const user = await prisma.user.findUnique({
@@ -643,6 +643,8 @@ export class UserController {
       const userId = payload.id;
       const prisma = await getPrismaClient(c.env.DATABASE_URL);
       const redisClient = RedisSingleton.getInstance(c);
+
+      deleteCookie(c,"access")
 
       await prisma.user.update({
         where: { id: userId },
